@@ -1,0 +1,12 @@
+// Zentrierte Inhaltsspalte.
+
+@use '../core' as *;
+
+.container {
+  @include container;
+
+  // Schmalere Spalte fuer langen Fliesstext.
+  &--prose {
+    max-width: $width-prose;
+  }
+}

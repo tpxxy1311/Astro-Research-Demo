@@ -1,0 +1,35 @@
+// Einziger Stylesheet-Einstieg — wird in BaseLayout.astro importiert.
+//
+// Die .astro-Dateien enthalten bewusst kein CSS: Struktur und Darstellung
+// sind getrennt. Damit entfaellt Astros Scoping, die Klassennamen folgen
+// deshalb durchgehend BEM und muessen projektweit eindeutig bleiben.
+//
+// Reihenfolge = aufsteigende Spezifitaet: erst Tokens und Element-Defaults,
+// dann Layout, dann Komponenten, zuletzt einzelne Seiten.
+
+// 1. Grundlagen
+@use 'base/theme';
+@use 'base/reset';
+@use 'base/typography';
+
+// 2. Layout — Geruest, das mehrere Seiten teilen
+@use 'layout/site';
+@use 'layout/site-header';
+@use 'layout/site-footer';
+@use 'layout/container';
+@use 'layout/page';
+@use 'layout/article';
+
+// 3. Komponenten — wiederverwendbare Bausteine
+@use 'components/button';
+@use 'components/card';
+@use 'components/card-grid';
+@use 'components/category-filter';
+@use 'components/empty-state';
+@use 'components/tag-list';
+@use 'components/blocks';
+@use 'components/rich-text';
+
+// 4. Seiten — was wirklich nur an einer Stelle vorkommt
+@use 'pages/home';
+@use 'pages/about';

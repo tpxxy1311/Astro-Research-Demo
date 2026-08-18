@@ -1,0 +1,20 @@
+// Platzhalter, wenn kein Inhalt da ist
+
+@use '../core' as *;
+
+.empty-state {
+  padding: 4rem 1.5rem;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: $radius-lg;
+  text-align: center;
+}
+
+.empty-state__title {
+  color: var(--color-text-muted);
+}
+
+.empty-state__hint {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-subtle);
+}

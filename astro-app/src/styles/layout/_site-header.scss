@@ -1,0 +1,56 @@
+// Kopfbereich mit Navigation
+
+@use '../core' as *;
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-header-bg);
+  backdrop-filter: blur(12px);
+}
+
+.site-header__inner {
+  @include container;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem;
+}
+
+.site-header__brand {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--color-text-strong);
+}
+
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.site-header__link {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: $radius-sm;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  transition: background-color $transition, color $transition;
+
+  &:hover {
+    background-color: var(--color-chip-bg);
+    color: var(--color-text-strong);
+  }
+
+  &[aria-current='page'] {
+    background-color: var(--color-chip-bg);
+    font-weight: 500;
+    color: var(--color-text-strong);
+  }
+}

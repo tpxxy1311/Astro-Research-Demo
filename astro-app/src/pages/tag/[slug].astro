@@ -30,30 +30,26 @@ interface Props {
 const { tag, tags, articles } = Astro.props;
 ---
 <BaseLayout title={`#${tag.name}`} description={`Alle Artikel zum Schlagwort ${tag.name}.`}>
-  <div class="mx-auto max-w-5xl px-5 py-12 sm:py-16">
-    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-      Schlagwort
-    </p>
-    <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-      #{tag.name}
-    </h1>
+  <div class="container page">
+    <p class="eyebrow">Schlagwort</p>
+    <h1 class="page__title">#{tag.name}</h1>
 
-    <div class="mt-8">
+    <div class="page__filter">
       <TagList tags={tags} active={tag.slug} size="md" />
     </div>
 
-    {
-      articles.length > 0 ? (
-        <div class="mt-10 grid gap-6 sm:grid-cols-2">
-          {articles.map((article) => (
-            <ArticleCard article={article} />
-          ))}
-        </div>
-      ) : (
-        <div class="mt-10">
+    <div class="page__content">
+      {
+        articles.length > 0 ? (
+          <div class="card-grid card-grid--two">
+            {articles.map((article) => (
+              <ArticleCard article={article} />
+            ))}
+          </div>
+        ) : (
           <EmptyState title={`Zu "#${tag.name}" ist noch kein Artikel veroeffentlicht.`} />
-        </div>
-      )
-    }
+        )
+      }
+    </div>
   </div>
 </BaseLayout>

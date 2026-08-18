@@ -1,0 +1,44 @@
+// Schlagwort-Chips
+
+@use '../core' as *;
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-list__tag {
+  display: inline-block;
+  border-radius: $radius-pill;
+  background-color: var(--color-chip-bg);
+  color: var(--color-chip-text);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color $transition, color $transition;
+
+  &:hover {
+    background-color: var(--color-chip-hover-bg);
+    color: var(--color-text-strong);
+  }
+
+  &--active {
+    background-color: var(--color-accent);
+    color: var(--color-accent-text);
+
+    &:hover {
+      background-color: var(--color-accent);
+      color: var(--color-accent-text);
+    }
+  }
+}
+
+.tag-list--sm .tag-list__tag {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+}
+
+.tag-list--md .tag-list__tag {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}

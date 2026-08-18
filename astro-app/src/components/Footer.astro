@@ -2,13 +2,13 @@
 import { SITE_TITLE } from '../consts';
 const year = new Date().getFullYear();
 ---
-<footer class="mt-24 border-t border-slate-200 dark:border-slate-800">
-  <div class="mx-auto flex max-w-5xl flex-col gap-3 px-5 py-10 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between dark:text-slate-400">
+<footer class="site-footer">
+  <div class="site-footer__inner">
     <p>&copy; {year} {SITE_TITLE}</p>
-    <div class="flex gap-5">
-      <a href="/rss.xml" class="transition-colors hover:text-slate-900 dark:hover:text-slate-100">RSS</a>
-      <a href="/sitemap-index.xml" class="transition-colors hover:text-slate-900 dark:hover:text-slate-100">Sitemap</a>
-      <a href="/about" class="transition-colors hover:text-slate-900 dark:hover:text-slate-100">Ueber mich</a>
+    <div class="site-footer__links">
+      <a href="/rss.xml">RSS</a>
+      <a href="/sitemap-index.xml">Sitemap</a>
+      <a href="/about">Ueber mich</a>
     </div>
   </div>
 </footer>

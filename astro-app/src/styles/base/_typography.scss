@@ -1,0 +1,32 @@
+// Schrift-Defaults und kleine, wiederkehrende Textbausteine.
+
+@use '../core' as *;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: $line-height-tight;
+  text-wrap: balance;
+  color: var(--color-text-strong);
+}
+
+strong {
+  font-weight: 600;
+}
+
+code,
+pre {
+  font-family: $font-mono;
+}
+
+/// Kleine Grossbuchstaben-Ueberschrift ueber einem Abschnitt.
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-subtle);
+}

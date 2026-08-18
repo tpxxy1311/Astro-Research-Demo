@@ -1,0 +1,119 @@
+// Einzelartikel inkl. Paper-Box
+
+@use '../core' as *;
+
+.article {
+  padding-block: 3rem;
+
+  @include mq($bp-sm) {
+    padding-block: 4rem;
+  }
+}
+
+.article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-text-subtle);
+}
+
+.article__category {
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--color-text-strong);
+  transition: color $transition;
+
+  &:hover {
+    color: var(--color-text-muted);
+  }
+}
+
+.article__title {
+  margin-top: 1rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+
+  @include mq($bp-sm) {
+    font-size: 3rem;
+  }
+}
+
+.article__abstract {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.article__cover {
+  width: 100%;
+  margin-top: 2.5rem;
+  border-radius: $radius-lg;
+}
+
+.paper {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-lg;
+  background-color: var(--color-surface);
+}
+
+.paper__title {
+  margin-top: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-strong);
+}
+
+.paper__type {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.paper__download {
+  margin-top: 1rem;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.paper__size {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.article__body {
+  margin-top: 2.5rem;
+  font-size: 1.125rem;
+}
+
+.article__footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.article__footer-heading {
+  margin-bottom: 0.75rem;
+}
+
+.article__back {
+  margin-top: 3rem;
+  font-size: 0.875rem;
+
+  a {
+    text-decoration: none;
+    color: var(--color-text-subtle);
+    transition: color $transition;
+
+    &:hover {
+      color: var(--color-text-strong);
+    }
+  }
+}

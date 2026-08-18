@@ -17,15 +17,6 @@ interface Props {
 
 const { content, nested = false } = Astro.props;
 
-const headingClasses: Record<number, string> = {
-  1: 'mt-12 mb-4 text-3xl font-bold tracking-tight sm:text-4xl',
-  2: 'mt-12 mb-4 text-2xl font-bold tracking-tight sm:text-3xl',
-  3: 'mt-10 mb-3 text-xl font-semibold tracking-tight sm:text-2xl',
-  4: 'mt-8 mb-3 text-lg font-semibold',
-  5: 'mt-6 mb-2 text-base font-semibold',
-  6: 'mt-6 mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400',
-};
-
 /** Trennt Inline-Inhalt eines list-item von einer evtl. verschachtelten Liste. */
 function splitListItem(children: unknown[]) {
   const inline: BlockInlineNode[] = [];
@@ -45,7 +36,7 @@ function splitListItem(children: unknown[]) {
         const level = Math.min(Math.max((block as any).level ?? 2, 1), 6);
         const Heading = `h${level}` as any;
         return (
-          <Heading class={headingClasses[level]}>
+          <Heading class={`blocks__heading blocks__heading--${level}`}>
             <RichText nodes={(block as any).children ?? []} />
           </Heading>
         );
@@ -54,17 +45,12 @@ function splitListItem(children: unknown[]) {
       case 'list': {
         const ordered = (block as any).format === 'ordered';
         const List = ordered ? 'ol' : 'ul';
-        const listClass = [
-          ordered ? 'list-decimal' : 'list-disc',
-          'space-y-2 pl-6 marker:text-slate-400',
-          nested ? 'mt-2' : 'my-6',
-        ].join(' ');
         return (
-          <List class={listClass}>
+          <List class:list={['blocks__list', nested && 'blocks__list--nested']}>
             {((block as any).children ?? []).map((item: any) => {
               const { inline, blocks } = splitListItem(item.children ?? []);
               return (
-                <li class="leading-relaxed">
+                <li class="blocks__list-item">
                   <RichText nodes={inline} />
                   {blocks.length > 0 && <Astro.self content={blocks} nested />}
                 </li>
@@ -76,14 +62,14 @@ function splitListItem(children: unknown[]) {
 
       case 'quote':
         return (
-          <blockquote class="my-8 border-l-4 border-slate-300 pl-6 text-lg italic text-slate-700 dark:border-slate-600 dark:text-slate-300">
+          <blockquote class="blocks__quote">
             <RichText nodes={(block as any).children ?? []} />
           </blockquote>
         );
 
       case 'code':
         return (
-          <pre class="my-8 overflow-x-auto rounded-lg bg-slate-900 p-5 text-sm leading-relaxed text-slate-100 dark:bg-slate-950 dark:ring-1 dark:ring-slate-800"><code>{((block as any).children ?? []).map((child: any) => child.text).join('')}</code></pre>
+          <pre class="blocks__pre"><code>{((block as any).children ?? []).map((child: any) => child.text).join('')}</code></pre>
         );
 
       case 'image': {
@@ -91,7 +77,7 @@ function splitListItem(children: unknown[]) {
         const src = mediaUrl(image);
         if (!src) return null;
         return (
-          <figure class="my-8">
+          <figure class="blocks__figure">
             <img
               src={src}
               alt={image.alternativeText ?? ''}
@@ -99,13 +85,8 @@ function splitListItem(children: unknown[]) {
               height={image.height ?? undefined}
               loading="lazy"
               decoding="async"
-              class="w-full rounded-lg"
             />
-            {image.caption && (
-              <figcaption class="mt-3 text-center text-sm text-slate-500 dark:text-slate-400">
-                {image.caption}
-              </figcaption>
-            )}
+            {image.caption && <figcaption>{image.caption}</figcaption>}
           </figure>
         );
       }
@@ -119,7 +100,7 @@ function splitListItem(children: unknown[]) {
           children.every((child: any) => child.type === 'text' && !child.text?.trim());
         if (isEmpty) return null;
         return (
-          <p class="my-5 leading-[1.8]">
+          <p class="blocks__paragraph">
             <RichText nodes={children} />
           </p>
         );

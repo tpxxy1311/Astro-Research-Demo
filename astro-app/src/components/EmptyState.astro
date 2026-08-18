@@ -5,7 +5,7 @@ interface Props {
 }
 const { title, hint } = Astro.props;
 ---
-<div class="rounded-xl border border-dashed border-slate-300 px-6 py-16 text-center dark:border-slate-700">
-  <p class="text-slate-600 dark:text-slate-400">{title}</p>
-  {hint && <p class="mt-2 text-sm text-slate-500 dark:text-slate-500">{hint}</p>}
+<div class="empty-state">
+  <p class="empty-state__title">{title}</p>
+  {hint && <p class="empty-state__hint">{hint}</p>}
 </div>

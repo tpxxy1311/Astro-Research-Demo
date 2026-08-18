@@ -1,0 +1,4 @@
+// Sammelpunkt fuer Tokens und Mixins: Partials binden nur diese eine Datei
+// per `@use '../core' as *;` ein statt beider Einzeldateien.
+@forward 'variables';
+@forward 'mixins';

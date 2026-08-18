@@ -15,7 +15,7 @@ const cover = mediaUrlFormat(article.coverImage, 'large');
 const paperFile = mediaUrl(article.originalPaperFile);
 const minutes = article.readingTime ?? estimateReadingTime(article.content);
 
-/** Bytes lesbar machen — steht neben dem Download-Link. */
+// Strapi gibt die Dateigroesse in KB an.
 const fileSizeLabel = article.originalPaperFile
   ? `${Math.max(1, Math.round(article.originalPaperFile.size))} KB`
   : null;
@@ -29,15 +29,12 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
   type="article"
   publishedDate={article.publishedDate}
 >
-  <article class="mx-auto max-w-3xl px-5 py-12 sm:py-16">
+  <article class="container container--prose article">
     <header>
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
+      <div class="article__meta">
         {
           article.category && (
-            <a
-              href={`/category/${article.category.slug}`}
-              class="font-medium text-slate-900 transition-colors hover:text-slate-600 dark:text-slate-200 dark:hover:text-slate-400"
-            >
+            <a class="article__category" href={`/category/${article.category.slug}`}>
               {article.category.name}
             </a>
           )
@@ -46,81 +43,59 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
         <span>{minutes} Min. Lesezeit</span>
       </div>
 
-      <h1 class="mt-4 text-4xl font-bold leading-tight tracking-tight text-slate-900 sm:text-5xl dark:text-slate-100">
-        {article.title}
-      </h1>
-
-      <p class="mt-6 text-xl leading-relaxed text-slate-600 dark:text-slate-400">
-        {article.abstract}
-      </p>
+      <h1 class="article__title">{article.title}</h1>
+      <p class="article__abstract">{article.abstract}</p>
     </header>
 
     {
       cover && (
         <img
+          class="article__cover"
           src={cover}
           alt={article.coverImage?.alternativeText ?? ''}
           width={article.coverImage?.width ?? undefined}
           height={article.coverImage?.height ?? undefined}
-          class="mt-10 w-full rounded-xl"
         />
       )
     }
 
     {
       hasPaperInfo && (
-        <aside class="mt-10 rounded-xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/50">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Zugrundeliegende Arbeit
-          </h2>
+        <aside class="paper">
+          <h2 class="eyebrow">Zugrundeliegende Arbeit</h2>
           {article.originalPaperTitle && (
-            <p class="mt-2 text-base font-medium text-slate-900 dark:text-slate-100">
-              {article.originalPaperTitle}
-            </p>
+            <p class="paper__title">{article.originalPaperTitle}</p>
           )}
-          {article.originalPaperType && (
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">{article.originalPaperType}</p>
-          )}
+          {article.originalPaperType && <p class="paper__type">{article.originalPaperType}</p>}
           {paperFile && (
-            <a
-              href={paperFile}
-              download
-              class="mt-4 inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
-            >
-              <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <a class="button button--primary paper__download" href={paperFile} download>
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path d="M10 2a1 1 0 0 1 1 1v7.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 10.586V3a1 1 0 0 1 1-1Z" />
                 <path d="M3 14a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1Z" />
               </svg>
               Originalarbeit als PDF
-              {fileSizeLabel && <span class="font-normal opacity-70">({fileSizeLabel})</span>}
+              {fileSizeLabel && <span class="paper__size">({fileSizeLabel})</span>}
             </a>
           )}
         </aside>
       )
     }
 
-    <div class="mt-10 text-lg text-slate-800 dark:text-slate-200">
+    <div class="article__body">
       <BlocksRenderer content={article.content} />
     </div>
 
     {
       article.tags?.length > 0 && (
-        <footer class="mt-16 border-t border-slate-200 pt-8 dark:border-slate-800">
-          <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Schlagworte
-          </h2>
+        <footer class="article__footer">
+          <h2 class="eyebrow article__footer-heading">Schlagworte</h2>
           <TagList tags={article.tags} size="md" />
         </footer>
       )
     }
 
-    <nav class="mt-12">
-      <a
-        href="/articles"
-        class="text-sm text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-      >
-        &larr; Alle Artikel
-      </a>
+    <nav class="article__back">
+      <a href="/articles">&larr; Alle Artikel</a>
     </nav>
   </article>
 </BaseLayout>

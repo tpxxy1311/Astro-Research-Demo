@@ -1,0 +1,37 @@
+// Kategorie-Reiter
+
+@use '../core' as *;
+
+.category-filter {
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.category-filter__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: -1px;
+}
+
+.category-filter__link {
+  display: inline-block;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text-subtle);
+  transition: border-color $transition, color $transition;
+
+  &:hover {
+    border-bottom-color: var(--color-border-strong);
+    color: var(--color-text-strong);
+  }
+
+  &[aria-current='page'] {
+    border-bottom-color: var(--color-accent);
+    font-weight: 500;
+    color: var(--color-text-strong);
+  }
+}
