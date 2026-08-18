@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import CategoryFilter from '../../components/CategoryFilter.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { getCategories, getArticlesByCategory } from '../../lib/strapi';
+import type { Article, Category } from '../../lib/strapi';
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+
+  return Promise.all(
+    categories.map(async (category) => ({
+      params: { slug: category.slug },
+      props: {
+        category,
+        categories,
+        articles: await getArticlesByCategory(category.slug),
+      },
+    }))
+  );
+}
+
+interface Props {
+  category: Category;
+  categories: Category[];
+  articles: Article[];
+}
+
+const { category, categories, articles } = Astro.props;
+---
+<BaseLayout
+  title={category.name}
+  description={category.description ?? `Alle Artikel in der Kategorie ${category.name}.`}
+>
+  <div class="mx-auto max-w-5xl px-5 py-12 sm:py-16">
+    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      Kategorie
+    </p>
+    <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+      {category.name}
+    </h1>
+    {category.description && (
+      <p class="mt-3 max-w-2xl text-slate-600 dark:text-slate-400">{category.description}</p>
+    )}
+
+    <div class="mt-8">
+      <CategoryFilter categories={categories} active={category.slug} />
+    </div>
+
+    {
+      articles.length > 0 ? (
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          {articles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      ) : (
+        <div class="mt-10">
+          <EmptyState title={`In "${category.name}" ist noch kein Artikel veroeffentlicht.`} />
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

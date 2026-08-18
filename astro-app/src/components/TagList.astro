@@ -1,0 +1,35 @@
+---
+import type { Tag } from '../lib/strapi';
+
+interface Props {
+  tags: Tag[];
+  /** aktiver Tag-Slug, wird hervorgehoben */
+  active?: string | null;
+  size?: 'sm' | 'md';
+}
+
+const { tags, active = null, size = 'sm' } = Astro.props;
+const sizeClass = size === 'sm' ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-sm';
+---
+{
+  tags.length > 0 && (
+    <ul class="flex flex-wrap gap-2">
+      {tags.map((tag) => (
+        <li>
+          <a
+            href={`/tag/${tag.slug}`}
+            class:list={[
+              'inline-block rounded-full font-medium transition-colors',
+              sizeClass,
+              tag.slug === active
+                ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100',
+            ]}
+          >
+            #{tag.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

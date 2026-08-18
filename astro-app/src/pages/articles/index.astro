@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import CategoryFilter from '../../components/CategoryFilter.astro';
+import TagList from '../../components/TagList.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { getArticles, getCategories, getTags } from '../../lib/strapi';
+
+const [articles, categories, tags] = await Promise.all([
+  getArticles(),
+  getCategories(),
+  getTags(),
+]);
+---
+<BaseLayout
+  title="Artikel"
+  description="Alle aufbereiteten Arbeiten im Ueberblick — filterbar nach Kategorie und Schlagwort."
+>
+  <div class="mx-auto max-w-5xl px-5 py-12 sm:py-16">
+    <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Artikel</h1>
+    <p class="mt-3 text-slate-600 dark:text-slate-400">
+      {articles.length} {articles.length === 1 ? 'Artikel' : 'Artikel'} insgesamt.
+    </p>
+
+    {categories.length > 0 && <div class="mt-8"><CategoryFilter categories={categories} active={null} /></div>}
+
+    {
+      articles.length > 0 ? (
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          {articles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      ) : (
+        <div class="mt-10">
+          <EmptyState
+            title="Noch keine Artikel veroeffentlicht."
+            hint="Lege im Strapi-Admin unter Content Manager → Article einen Eintrag an und veroeffentliche ihn."
+          />
+        </div>
+      )
+    }
+
+    {
+      tags.length > 0 && (
+        <section class="mt-16 border-t border-slate-200 pt-8 dark:border-slate-800">
+          <h2 class="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Nach Schlagwort
+          </h2>
+          <TagList tags={tags} size="md" />
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

@@ -1,0 +1,73 @@
+---
+import type { Article } from '../lib/strapi';
+import { formatDate, mediaUrlFormat, estimateReadingTime } from '../lib/strapi';
+
+interface Props {
+  article: Article;
+  /** groessere Darstellung fuer die Startseite */
+  featured?: boolean;
+}
+
+const { article, featured = false } = Astro.props;
+
+const cover = mediaUrlFormat(article.coverImage, featured ? 'medium' : 'small');
+const minutes = article.readingTime ?? estimateReadingTime(article.content);
+---
+<article
+  class:list={[
+    'group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all hover:border-slate-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900/40 dark:hover:border-slate-700',
+    featured && 'sm:flex-row',
+  ]}
+>
+  {
+    cover && (
+      <div class:list={['overflow-hidden bg-slate-100 dark:bg-slate-800', featured ? 'sm:w-2/5' : '']}>
+        <img
+          src={cover}
+          alt={article.coverImage?.alternativeText ?? ''}
+          loading="lazy"
+          decoding="async"
+          class:list={[
+            'h-full w-full object-cover transition-transform duration-500 group-hover:scale-105',
+            featured ? 'aspect-[16/10] sm:aspect-auto sm:min-h-full' : 'aspect-[16/9]',
+          ]}
+        />
+      </div>
+    )
+  }
+
+  <div class:list={['flex flex-1 flex-col p-6', featured && 'sm:p-8']}>
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+      {
+        article.category && (
+          <a
+            href={`/category/${article.category.slug}`}
+            class="relative z-10 font-medium text-slate-900 transition-colors hover:text-slate-600 dark:text-slate-200 dark:hover:text-slate-400"
+          >
+            {article.category.name}
+          </a>
+        )
+      }
+      <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
+      <span>{minutes} Min. Lesezeit</span>
+    </div>
+
+    <h2 class:list={['mt-3 font-bold tracking-tight text-slate-900 dark:text-slate-100', featured ? 'text-2xl' : 'text-xl']}>
+      <a href={`/articles/${article.slug}`} class="after:absolute after:inset-0 after:content-['']">
+        {article.title}
+      </a>
+    </h2>
+
+    <p class="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+      {article.abstract}
+    </p>
+
+    {
+      article.originalPaperType && (
+        <p class="mt-4 text-xs text-slate-500 dark:text-slate-400">
+          Basiert auf einer <span class="font-medium">{article.originalPaperType}</span>
+        </p>
+      )
+    }
+  </div>
+</article>

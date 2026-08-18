@@ -1,0 +1,129 @@
+---
+/**
+ * Rendert das native Strapi-"Blocks"-Feld nach HTML.
+ *
+ * Verschachtelte Listen loest die Komponente ueber Astro.self auf, deshalb
+ * braucht es weder eine React-Insel noch @strapi/blocks-react-renderer.
+ */
+import type { BlockInlineNode, BlockNode, BlocksContent } from '../lib/strapi';
+import { mediaUrl } from '../lib/strapi';
+import RichText from './RichText.astro';
+
+interface Props {
+  content: BlocksContent | null;
+  /** true = eingebettete Liste, dann ohne aeussere Abstaende */
+  nested?: boolean;
+}
+
+const { content, nested = false } = Astro.props;
+
+const headingClasses: Record<number, string> = {
+  1: 'mt-12 mb-4 text-3xl font-bold tracking-tight sm:text-4xl',
+  2: 'mt-12 mb-4 text-2xl font-bold tracking-tight sm:text-3xl',
+  3: 'mt-10 mb-3 text-xl font-semibold tracking-tight sm:text-2xl',
+  4: 'mt-8 mb-3 text-lg font-semibold',
+  5: 'mt-6 mb-2 text-base font-semibold',
+  6: 'mt-6 mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400',
+};
+
+/** Trennt Inline-Inhalt eines list-item von einer evtl. verschachtelten Liste. */
+function splitListItem(children: unknown[]) {
+  const inline: BlockInlineNode[] = [];
+  const blocks: BlockNode[] = [];
+  for (const child of children) {
+    const type = (child as { type?: string })?.type;
+    if (type === 'list') blocks.push(child as BlockNode);
+    else inline.push(child as BlockInlineNode);
+  }
+  return { inline, blocks };
+}
+---
+{
+  (content ?? []).map((block) => {
+    switch (block.type) {
+      case 'heading': {
+        const level = Math.min(Math.max((block as any).level ?? 2, 1), 6);
+        const Heading = `h${level}` as any;
+        return (
+          <Heading class={headingClasses[level]}>
+            <RichText nodes={(block as any).children ?? []} />
+          </Heading>
+        );
+      }
+
+      case 'list': {
+        const ordered = (block as any).format === 'ordered';
+        const List = ordered ? 'ol' : 'ul';
+        const listClass = [
+          ordered ? 'list-decimal' : 'list-disc',
+          'space-y-2 pl-6 marker:text-slate-400',
+          nested ? 'mt-2' : 'my-6',
+        ].join(' ');
+        return (
+          <List class={listClass}>
+            {((block as any).children ?? []).map((item: any) => {
+              const { inline, blocks } = splitListItem(item.children ?? []);
+              return (
+                <li class="leading-relaxed">
+                  <RichText nodes={inline} />
+                  {blocks.length > 0 && <Astro.self content={blocks} nested />}
+                </li>
+              );
+            })}
+          </List>
+        );
+      }
+
+      case 'quote':
+        return (
+          <blockquote class="my-8 border-l-4 border-slate-300 pl-6 text-lg italic text-slate-700 dark:border-slate-600 dark:text-slate-300">
+            <RichText nodes={(block as any).children ?? []} />
+          </blockquote>
+        );
+
+      case 'code':
+        return (
+          <pre class="my-8 overflow-x-auto rounded-lg bg-slate-900 p-5 text-sm leading-relaxed text-slate-100 dark:bg-slate-950 dark:ring-1 dark:ring-slate-800"><code>{((block as any).children ?? []).map((child: any) => child.text).join('')}</code></pre>
+        );
+
+      case 'image': {
+        const image = (block as any).image;
+        const src = mediaUrl(image);
+        if (!src) return null;
+        return (
+          <figure class="my-8">
+            <img
+              src={src}
+              alt={image.alternativeText ?? ''}
+              width={image.width ?? undefined}
+              height={image.height ?? undefined}
+              loading="lazy"
+              decoding="async"
+              class="w-full rounded-lg"
+            />
+            {image.caption && (
+              <figcaption class="mt-3 text-center text-sm text-slate-500 dark:text-slate-400">
+                {image.caption}
+              </figcaption>
+            )}
+          </figure>
+        );
+      }
+
+      case 'paragraph':
+      default: {
+        const children = (block as any).children ?? [];
+        // Strapi legt zwischen Bloecken gelegentlich leere Absaetze ab.
+        const isEmpty =
+          children.length === 0 ||
+          children.every((child: any) => child.type === 'text' && !child.text?.trim());
+        if (isEmpty) return null;
+        return (
+          <p class="my-5 leading-[1.8]">
+            <RichText nodes={children} />
+          </p>
+        );
+      }
+    }
+  })
+}

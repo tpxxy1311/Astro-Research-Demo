@@ -1,0 +1,17 @@
+{
+  "kind": "singleType",
+  "collectionName": "authors",
+  "info": {
+    "singularName": "author",
+    "pluralName": "authors",
+    "displayName": "Author",
+    "description": "Profil des Autors (Über mich)"
+  },
+  "options": { "draftAndPublish": true },
+  "attributes": {
+    "name": { "type": "string", "required": true },
+    "bio": { "type": "blocks" },
+    "avatar": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "socialLinks": { "type": "component", "repeatable": true, "component": "shared.social-link" }
+  }
+}

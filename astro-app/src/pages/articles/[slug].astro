@@ -1,0 +1,21 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getArticles } from '../../lib/strapi';
+import type { Article } from '../../lib/strapi';
+
+/** Eine statische Seite pro veroeffentlichtem Artikel. */
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+---
+<ArticleLayout article={article} />

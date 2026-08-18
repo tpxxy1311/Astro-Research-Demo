@@ -1,0 +1,40 @@
+---
+import { SITE_TITLE } from '../consts';
+
+const path = Astro.url.pathname;
+const links = [
+  { href: '/', label: 'Start' },
+  { href: '/articles', label: 'Artikel' },
+  { href: '/about', label: 'Ueber mich' },
+];
+
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+<header class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/85 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/85">
+  <nav class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
+    <a href="/" class="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+      {SITE_TITLE}
+    </a>
+    <ul class="flex items-center gap-1 text-sm">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              class:list={[
+                'rounded-md px-3 py-1.5 transition-colors',
+                isActive(link.href)
+                  ? 'bg-slate-100 font-medium text-slate-900 dark:bg-slate-800 dark:text-slate-100'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100',
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

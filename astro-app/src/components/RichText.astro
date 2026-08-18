@@ -1,0 +1,37 @@
+---
+/**
+ * Rendert die Inline-Knoten eines Blocks (Text mit Auszeichnungen und Links).
+ * Ruft sich fuer Link-Kinder ueber Astro.self selbst auf.
+ */
+import type { BlockInlineNode } from '../lib/strapi';
+
+interface Props {
+  nodes: BlockInlineNode[];
+}
+
+const { nodes } = Astro.props;
+---
+{
+  nodes.map((node) => {
+    if (node.type === 'link') {
+      const isExternal = /^https?:\/\//i.test(node.url);
+      return (
+        <a
+          href={node.url}
+          class="underline decoration-slate-400 underline-offset-2 transition-colors hover:decoration-slate-900 dark:decoration-slate-500 dark:hover:decoration-slate-100"
+          {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
+          <Astro.self nodes={node.children} />
+        </a>
+      );
+    }
+
+    let content: any = node.text;
+    if (node.code) content = <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-slate-800">{content}</code>;
+    if (node.bold) content = <strong class="font-semibold">{content}</strong>;
+    if (node.italic) content = <em>{content}</em>;
+    if (node.underline) content = <u>{content}</u>;
+    if (node.strikethrough) content = <s>{content}</s>;
+    return content;
+  })
+}
