@@ -1,5 +1,6 @@
 ---
 import { SITE_TITLE } from '../consts';
+import { Icon } from 'astro-icon/components';
 
 const path = Astro.url.pathname;
 const links = [
@@ -9,12 +10,68 @@ const links = [
 ];
 
 const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+
+// Ziel fuer den Fall, dass es keine Vorgeschichte gibt — direkt aufgerufener
+// Link, neuer Tab, Lesezeichen. Dann fuehrt der Knopf eine Ebene hoeher:
+// /category und /tag haben keine eigene Uebersicht, deshalb ist dort wie bei
+// den Artikeln die Artikelliste das Ziel.
+const segments = path.split('/').filter(Boolean);
+const fallback = segments.length > 1 ? '/articles' : '/';
 ---
+{/* Messpunkt fuer den angedockten Zustand: sobald dieses Stueck aus dem
+    Sichtfeld gescrollt ist, wird der Balken zur Pille. Ein IntersectionObserver
+    darauf kostet nichts — ein scroll-Listener liefe bei jedem Pixel mit. */}
+<div class="site-header__sentinel" data-header-sentinel aria-hidden="true"></div>
+
 <header class="site-header">
-  <nav class="site-header__inner">
-    <p class="site-header__brand">{SITE_TITLE}</p>
-    <button>
-      
-    </button>
-  </nav>
+  <div class="site-header__inner">
+    <nav class="site-header__bar">
+      <p class="site-header__brand">TIMPETERSRESEARCH</p>
+      <a class="button button--pill" href={fallback} data-back>
+        <Icon class="button__arrow button__arrow--back" name="lucide:corner-down-left" />
+        Go Back
+      </a>
+    </nav>
+  </div>
 </header>
+
+<script>
+  const header = document.querySelector('.site-header');
+  const sentinel = document.querySelector('[data-header-sentinel]');
+
+  if (header && sentinel) {
+    // rootMargin schiebt die Auslesekante 48 px ueber den Viewport hinaus: die
+    // Pille erscheint erst nach einem bewussten Stueck Scrollweg, nicht schon
+    // beim ersten Pixel.
+    new IntersectionObserver(
+      ([entry]) => header.classList.toggle('site-header--pinned', !entry.isIntersecting),
+      { rootMargin: '48px 0px 0px 0px' },
+    ).observe(sentinel);
+  }
+
+  // Progressive Enhancement: der Knopf ist ein echter Link mit echtem Ziel und
+  // funktioniert ohne JS, per Mittelklick und im Kontextmenue. Nur wenn es auf
+  // dieser Seite wirklich etwas zurueckzugehen gibt, wird daraus der
+  // Browser-Schritt zurueck — der fuehrt naeher an das heran, wo der Besucher
+  // herkam, als es ein festes Ziel je koennte.
+  const back = document.querySelector<HTMLAnchorElement>('[data-back]');
+
+  back?.addEventListener('click', (event) => {
+    // Modifizierte Klicks gehoeren dem Browser: neuer Tab, neues Fenster.
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    const referrer = document.referrer;
+    const cameFromSite = referrer !== '' && new URL(referrer).origin === location.origin;
+
+    // history.length > 1 schliesst den Fall aus, dass die Seite aus einem
+    // Link heraus in einem neuen Tab geoeffnet wurde: dann ist zwar ein
+    // Referrer gesetzt, aber es gibt keinen Eintrag zum Zurueckspringen —
+    // history.back() waere wirkungslos und der Knopf tot.
+    if (!cameFromSite || history.length <= 1) return;
+
+    event.preventDefault();
+    history.back();
+  });
+</script>

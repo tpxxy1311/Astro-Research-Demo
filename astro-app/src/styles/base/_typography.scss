@@ -34,9 +34,15 @@ strong {
 .title {
   font-size: $text-title-1;
   line-height: $leading-title-1;
-  letter-spacing: $track-title-1;
-  font-weight: 500;
+  font-weight: 700;
+  text-transform: uppercase;
   text-wrap: balance;
+
+  // Nicht $track-title-1: das negative Tracking der Skala ist fuer gemischte
+  // Schreibung gerechnet, wo Ober- und Unterlaengen den Rhythmus tragen.
+  // Versalien haben diesen Wechsel nicht und stehen damit zu eng — sie
+  // brauchen ihre natuerliche Laufweite.
+  letter-spacing: 0;
 }
 
 /// Vorspann unter einem Titel.

@@ -11,7 +11,7 @@ $font-serif: 'ITC Garamond', Georgia, 'Times New Roman', serif;
 // Fluide Groessen-Skala. Bewusst kurz gehalten: wenige, weit auseinander
 // liegende Stufen erzeugen mehr Hierarchie als viele aehnliche.
 $text-display: clamp(2.75rem, 8.5vw, 7rem);
-$text-title-1: clamp(2rem, 5.5vw, 4.25rem);
+$text-title-1: clamp(3rem, 2rem + 3.5vw, 5.25rem);
 $text-title-2: clamp(1.5rem, 3.4vw, 2.25rem);
 $text-title-3: clamp(1.25rem, 2vw, 1.5rem);
 $text-lead: clamp(1.0625rem, 1.5vw, 1.375rem);

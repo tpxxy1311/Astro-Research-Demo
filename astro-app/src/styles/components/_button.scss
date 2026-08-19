@@ -76,6 +76,11 @@
     &:hover .button__arrow {
       transform: translateX($space-3xs);
     }
+
+    // Zeigt der Pfeil nach links, muss er beim Hover auch nach links ruecken.
+    &:hover .button__arrow--back {
+      transform: translateX(-$space-3xs);
+    }
   }
 
   // Segment eines Umschalters. Der gedrueckte Zustand steht ausschliesslich in
@@ -100,6 +105,11 @@
 
 // Mehrere Schaltflaechen als eine Einheit.
 .button-group {
+  display: inline-flex;
+  gap: $space-2xs;
+}
+
+.button-group-left {
   display: inline-flex;
   gap: $space-2xs;
 }

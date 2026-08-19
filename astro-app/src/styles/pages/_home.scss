@@ -28,6 +28,13 @@
   font-family: $font-serif;
 }
 
+.hero__text__left {
+  align-self: flex-start;
+  text-align: left;
+  margin-top: $space-lg;
+  font-family: $font-serif;
+}
+
 .section {
   padding-bottom: $space-3xl;
 
