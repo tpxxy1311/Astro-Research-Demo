@@ -35,8 +35,23 @@ const indexLabel = index === undefined ? null : String(index).padStart(2, '0');
     </div>
   )}
 
-  {indexLabel && <span class="entry__index">{indexLabel}</span>}
+  {/* Kopfzeile: Nummer und Meta teilen sich eine Zeile. Sie brauchen dafuer
+      diesen gemeinsamen Elternknoten — als Geschwister in der Flex-Spalte des
+      Eintrags stuenden sie zwangslaeufig untereinander. */}
+  <div class="entry__head">
+    {indexLabel && <span class="entry__index">{indexLabel}</span>}
 
+    <div class="entry__meta">
+      {article.category && (
+        <a class="category-link" href={`/category/${article.category.slug}`}>
+          {article.category.name}
+        </a>
+      )}
+      <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
+      <span>{minutes} Min.</span>
+      {article.originalPaperType && <span>{article.originalPaperType}</span>}
+    </div>
+  </div>
   <div class="entry__main">
     <h2 class="entry__title">
       <a class="entry__link" href={`/articles/${article.slug}`}>
@@ -46,16 +61,4 @@ const indexLabel = index === undefined ? null : String(index).padStart(2, '0');
     <p class="entry__abstract">{article.abstract}</p>
   </div>
 
-  <div class="entry__meta">
-    {article.category && (
-      <a class="category-link" href={`/category/${article.category.slug}`}>
-        {article.category.name}
-      </a>
-    )}
-    <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
-    <span>{minutes} Min.</span>
-    {article.originalPaperType && <span>{article.originalPaperType}</span>}
-  </div>
-
-  <span class="entry__arrow" aria-hidden="true">&#8594;</span>
 </article>

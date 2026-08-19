@@ -48,7 +48,7 @@ const fallback = segments.length > 1 ? '/articles' : '/';
     // rootMargin waechst nach oben ueber den Viewport hinaus: je groesser der
     // Wert, desto spaeter verlaesst der Messpunkt das Sichtfeld und desto
     // weiter unten liegt die Schwelle.
-    const watch = (margin, act) =>
+    const watch = (margin: string, act: (visible: boolean) => void) =>
       new IntersectionObserver(([entry]) => act(entry.isIntersecting), {
         rootMargin: `${margin} 0px 0px 0px`,
       }).observe(sentinel);

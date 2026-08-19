@@ -7,7 +7,7 @@
   padding-block: $space-2xl $space-3xl;
 
   @include mq($bp-md) {
-    padding-block: $space-3xl;
+    padding-block: $space-xl;
   }
 }
 
@@ -28,7 +28,7 @@
 }
 
 .article__title {
-  font-size: $text-title-1;
+  font-size: $text-title-2;
   line-height: $leading-title-1;
   letter-spacing: $track-title-1;
   font-weight: 700;
@@ -36,7 +36,7 @@
 
 .article__abstract {
   margin-top: $space-md;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   line-height: $leading-lead;
   letter-spacing: $track-lead;
   color: var(--color-muted);
@@ -46,7 +46,10 @@
 
 .article__cover {
   width: 100%;
-  margin-top: $space-xl;
+  margin-top: 3rem;
+  border-radius: $radius-card;
+  aspect-ratio: 21 / 9;     /* ← hier */
+  object-fit: cover;
 }
 
 // -------------------------------------------------------- Originalarbeit
@@ -99,7 +102,8 @@
 // Der Schriftwechsel markiert damit den Uebergang von Navigation zu Text —
 // er traegt keine Hierarchie innerhalb des Artikels.
 .article__body {
-  margin-top: $space-xl;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
   font-family: $font-sans;
   // Von ITC Garamond liegt nur der Light-Condensed-Schnitt vor. Explizit
   // gesetzt, damit kein Elternwert einen synthetischen Fettschnitt erzwingt.
@@ -107,7 +111,7 @@
   // Garamond hat eine kleine x-Hoehe und laeuft schmal: bei gleicher
   // Punktgroesse wirkt sie spuerbar kleiner als die Sans. Der Aufschlag
   // gleicht das optisch aus, statt die Token-Skala zu verbiegen.
-  font-size: 1.1875rem;
+  font-size: 1.1275rem;
 }
 
 // Ueberschriften und Code im Artikel bleiben in der Sans bzw. Mono —

@@ -90,9 +90,10 @@
     background-color: transparent;
     border-color: var(--color-line-strong);
     color: var(--color-fg);
+    transition: all 0.3s ease;
 
     &:hover {
-      border-color: var(--color-fg);
+      border-color: var(--color-accent);;
     }
 
     &[aria-pressed='true'] {

@@ -10,13 +10,9 @@
 // weil die Titel lang sind, werden sie in der Kartenansicht geclampt und eine
 // Stufe kleiner gesetzt, sonst stehen unterschiedlich hohe Karten nebeneinander.
 
-@use '../core' as *;
+@use "../core" as *;
 
 .entries {
-  &--list {
-    // Die Oberkante der ersten Zeile schliesst die Liste nach oben ab.
-    border-top: 1px solid var(--color-fg);
-  }
 
   &--grid {
     display: grid;
@@ -26,7 +22,7 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include mq($bp-md) {
+    @include mq($bp-xl) {
       grid-template-columns: repeat(3, 1fr);
       gap: $space-md;
     }
@@ -36,20 +32,20 @@
 // ---------------------------------------------------------------- Eintrag
 .entry {
   position: relative;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: $space-sm;
 
   .entries--list & {
-    padding-block: $space-lg;
+    //padding-block: $space-lg;
     border-bottom: 1px solid var(--color-line);
-
     @include mq($bp-md) {
-      // Nummer | Inhalt | Meta | Pfeil — der Pfeil bekommt eine eigene Spalte,
-      // damit er die rechtsbuendige Metaspalte nicht ueberlagert.
-      grid-template-columns: 3.5rem 1fr 11rem 1.25rem;
-      gap: $space-lg;
-      align-items: start;
-      padding-block: $space-xl;
+      // Kopfzeile, darunter der Text ueber die volle Breite:
+      //
+      //   01                            01. MAI 2025  15 MIN.  MASTER THESIS
+      //   Titel und Vorspann                                              ->
+      gap: $space-md;
+      padding-bottom: 2rem;
     }
   }
 
@@ -62,6 +58,22 @@
     display: flex;
     flex-direction: column;
     gap: $space-xs;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 8px 28px rgb(0 0 0 / 0.07);
+    // Derselbe Strich, der in der Zeilenansicht die Eintraege trennt, umschliesst
+    // sie in der Kartenansicht — eine Linienfarbe fuer beide Ansichten.
+    border: 1px solid var(--color-line);
+    background-color: var(--color-bg);
+
+    // Minimal und rundum gleich: das Titelbild sitzt in der Flaeche statt an
+    // ihrer Kante, was erst dadurch zur abgerundeten Karte passt.
+    padding: $space-2xs;
+    border-radius: $radius-card;
+
+    // Kanten bleiben scharf, wie im Rest des Projekts — rund wird nur, was
+    // wie ein Chip oder eine Schaltflaeche funktioniert.
+    transition: border-color $dur $ease;
   }
 }
 
@@ -70,9 +82,18 @@
   overflow: hidden;
   background-color: var(--color-surface);
 
+  .entries--grid & {
+    // Konzentrisch runden: der innere Radius ist der aeussere minus dem
+    // Abstand zwischen beiden. Nur so laufen Bild- und Kartenecke parallel,
+    // statt an den Ecken auseinanderzudriften.
+    border-radius: calc(#{$radius-card} - #{$space-2xs});
+  }
+
   img {
     width: 100%;
-    aspect-ratio: 3 / 2;
+    // Flaches Band statt Bildformat: die Karte soll vom Text leben, das Bild
+    // sie nur anmoderieren. 3/2 nahm zuvor mehr als die halbe Kartenhoehe ein.
+    aspect-ratio: 10 / 4;
     object-fit: cover;
     transition: transform $dur-slow $ease;
   }
@@ -95,36 +116,74 @@
   }
 }
 
+// Kopfzeile: Nummer links, Meta rechts. Der Wrapper existiert nur, damit die
+// beiden in der Flex-Spalte des Eintrags eine gemeinsame Zeile bekommen.
+.entry__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: $space-2xs $space-md;
+
+  // In der Karte ist die Nummer ausgeblendet, die Meta-Zeile rueckt damit von
+  // selbst nach links. margin-top:auto sitzt jetzt hier statt an der Meta-Zeile
+  // — es soll Kopf und Text gemeinsam an den Fuss der Karte schieben.
+  .entries--grid & {
+    margin-top: auto;
+  }
+}
+
 .entry__index {
   @include label;
-  color: var(--color-subtle);
+  // Etwas fetter als die uebrigen Kleinschrift-Auszeichnungen: die Nummer
+  // ordnet den Eintrag ein und darf dafuer etwas mehr Gewicht haben.
+  font-weight: 600;
+  color: var(--color-main);
   font-variant-numeric: tabular-nums;
-  transition: color $dur $ease;
+
+  // Kreis um die Nummer. Feste Groesse statt Polsterung: gepolstert waere das
+  // Ergebnis bei einer und bei zwei Ziffern verschieden breit und damit ein
+  // Oval statt eines Kreises. 2.25rem fasst auch dreistellige Nummern.
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-line);
+  border-radius: $radius-pill;
+  // Das Tracking aus dem label-Mixin haengt hinter dem letzten Zeichen und
+  // schoebe die Ziffern sonst sichtbar aus der Mitte.
+  text-indent: $track-label;
+
+  transition:
+    color $dur $ease,
+    border-color $dur $ease;
 
   .entry:hover & {
-    color: var(--color-accent);
+    border-color: var(--color-accent);
   }
 }
 
 // Verhindert, dass lange Titel die Grid-Spalte sprengen.
 .entry__main {
   min-width: 0;
+
+  // Die Karte selbst ist knapp gepolstert — das passt fuer das Bild, waere fuer
+  // Text aber zu eng am Rahmen. Der Einzug kommt deshalb von den Textbloecken.
+  .entries--grid & {
+    padding-inline: $space-2xs;
+  }
 }
 
 .entry__title {
-  font-size: $text-title-2;
-  line-height: $leading-title-2;
-  letter-spacing: $track-title-2;
-  font-weight: 500;
+  font-size: $text-title-3;
+  line-height: 1.3;
+  letter-spacing: $track-title-3;
+  font-weight: 600;
   text-wrap: balance;
   // Nur transform animieren — bleibt auf dem Compositor.
   transition: transform $dur $ease;
-
-  @include mq($bp-md) {
-    .entries--list .entry:hover & {
-      transform: translateX($space-2xs);
-    }
-  }
 
   // In der Karte eine Stufe kleiner und auf drei Zeilen begrenzt.
   .entries--grid & {
@@ -139,7 +198,7 @@
 
   // Spannt den ganzen Eintrag als Klickflaeche auf, ohne Links zu verschachteln.
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
   }
@@ -148,9 +207,8 @@
 .entry__abstract {
   @include line-clamp(2);
   margin-top: $space-2xs;
-  max-width: 44ch;
   font-size: $text-small;
-  line-height: 1.7;
+  line-height: 1.5;
   color: var(--color-muted);
 
   // Die Spalte deckelt die Zeilenlaenge schon, dafuer ist mehr Hoehe da.
@@ -169,19 +227,21 @@
   color: var(--color-subtle);
 
   // In der Karte sitzt die Meta-Zeile am Fuss, damit die Reihe eine
-  // gemeinsame Grundlinie hat.
+  // gemeinsame Grundlinie hat. Der seitliche und untere Einzug bringt sie auf
+  // denselben Abstand zum Rahmen wie das Bild.
   .entries--grid & {
-    margin-top: auto;
-    padding-top: $space-xs;
+    padding: $space-xs $space-2xs $space-2xs;
   }
 
-  // Rechtsbuendige Spalte nur in der Zeilenansicht.
+  // In der Zeilenansicht laeuft die Meta-Zeile waagerecht und schliesst
+  // rechts ab — nur so steht sie auf derselben Hoehe wie die Nummer. Als
+  // Spalte gesetzt waere sie drei Zeilen hoch und die Kopfzeile schief.
   @include mq($bp-md) {
     .entries--list & {
-      flex-direction: column;
-      align-items: flex-end;
+      flex-direction: row;
+      justify-content: flex-end;
       text-align: right;
-      gap: $space-2xs;
+      gap: $space-sm;
     }
   }
 }
@@ -192,14 +252,18 @@
   @include mq($bp-md) {
     .entries--list & {
       display: block;
-      justify-self: end;
+      // align-self, nicht justify-self: im Flex-Container liegt die Querachse
+      // waagerecht, und justify-self wirkt dort ueberhaupt nicht.
+      align-self: flex-end;
       font-size: $text-small;
       line-height: $leading-title-2;
       color: var(--color-accent);
       opacity: 0;
       // Laeuft in die Richtung ein, in die der Link fuehrt.
       transform: translateX(-$space-2xs);
-      transition: opacity $dur $ease, transform $dur $ease;
+      transition:
+        opacity $dur $ease,
+        transform $dur $ease;
     }
 
     .entries--list .entry:hover & {

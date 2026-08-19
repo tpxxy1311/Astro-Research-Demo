@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import BlocksRenderer from '../components/BlocksRenderer.astro';
 import TagList from '../components/TagList.astro';
+import { Icon } from 'astro-icon/components';
 import type { Article } from '../lib/strapi';
 import { formatDate, mediaUrl, mediaUrlFormat, estimateReadingTime } from '../lib/strapi';
 
@@ -59,14 +60,14 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
       )
     }
 
-    {
+    <!-- {
       hasPaperInfo && (
         <aside class="paper">
-          <h2 class="paper__label">Zugrundeliegende Arbeit</h2>
+          {/* <h2 class="paper__label">Zugrundeliegende Arbeit</h2>
           {article.originalPaperTitle && (
             <p class="paper__title">{article.originalPaperTitle}</p>
           )}
-          {article.originalPaperType && <p class="paper__type">{article.originalPaperType}</p>}
+          {article.originalPaperType && <p class="paper__type">{article.originalPaperType}</p>} */}
           {paperFile && (
             <a class="button button--primary paper__download" href={paperFile} download>
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -79,7 +80,7 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
           )}
         </aside>
       )
-    }
+    } -->
 
     <div class="article__body">
       <BlocksRenderer content={article.content} />
@@ -94,8 +95,11 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
       )
     } -->
 
-    <nav class="article__back">
-      <a href="/articles">&larr; Alle Artikel</a>
-    </nav>
+    <a class="button button--pill" href="/articles">
+          {/* --back kehrt die Hover-Bewegung um: der Pfeil zeigt nach links,
+              also muss er beim Hover auch nach links ruecken. */}
+          <Icon class="button__arrow button__arrow--back" name="lucide:corner-down-left" />
+          All Articles
+        </a>
   </article>
 </BaseLayout>

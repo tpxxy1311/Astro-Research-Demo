@@ -40,6 +40,19 @@ video {
   max-width: 100%;
 }
 
+// Die Attribute width/height am <img> sind Praesentations-Hinweise und wirken
+// wie CSS-Angaben. Ueberschreibt eine Regel nur die Breite, bleibt die Hoehe
+// auf dem Pixelwert des Attributs stehen und das Bild wird verzerrt.
+// height:auto gibt die Hoehe ans Seitenverhaeltnis zurueck — das die Attribute
+// weiterhin liefern, weshalb sie den Platz trotzdem vorab reservieren.
+//
+// Bewusst ohne svg: inline-SVG ohne eigene Groessenangabe kann bei height:auto
+// zusammenfallen. Die im Projekt bringen ihre Masse selbst mit.
+img,
+video {
+  height: auto;
+}
+
 input,
 button,
 textarea,
