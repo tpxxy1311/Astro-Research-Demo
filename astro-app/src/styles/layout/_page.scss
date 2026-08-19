@@ -7,14 +7,14 @@
   padding-block: $space-2xl $space-3xl;
 
   @include mq($bp-md) {
-    padding-block: $space-3xl;
+    padding-block: $space-xl;
   }
 
   // Kopfzone: Rubrik, Titel, Vorspann.
   &__head {
     display: grid;
     gap: $space-sm;
-    padding-bottom: $space-2xl;
+    padding-bottom: $space-xl;
   }
 
   &__count {

@@ -7,9 +7,16 @@
 //   .site-header__inner  die Inhaltsspalte — Hoechstbreite und Gutter
 //   .site-header__bar    der eigentliche Balken, der zur Pille wird
 //
-// Die Pille muss der Balken sein und nicht der Container: dessen Kanten liegen
+// Die Pille muss am Balken haengen und nicht am Container: dessen Kanten liegen
 // auf der Gutter-Aussenseite, die des Balkens genau dort, wo auch der Text des
 // Hauptinhalts beginnt. Nur so fluchtet sie mit dem Inhalt darunter.
+//
+// Entscheidend fuer die Ruhe beim Scrollen: der angedockte Zustand darf die
+// HOEHE des Kopfbereichs nicht anfassen. Der Header klebt im Fluss, seine Hoehe
+// gehoert also zum Dokument. Aendert sie sich, zieht das Scroll-Anchoring des
+// Browsers scrollY nach, das ueberquert die Umschaltschwelle rueckwaerts, der
+// Zustand kippt zurueck — und das Ganze schwingt. Deshalb liegt die Pille in
+// einem absolut positionierten ::before, das nur seine Deckkraft aendert.
 
 @use '../core' as *;
 
@@ -31,34 +38,58 @@
   @include container;
   padding-block: $space-md;
 
-  // Was der Balken beim Andocken innen dazugewinnt, gibt der Container aussen
-  // ab. Die Gesamthoehe des Kopfbereichs bleibt damit konstant — er klebt im
-  // Fluss, eine wachsende Hoehe wuerde den Inhalt darunter nach unten stossen.
-  .site-header--pinned & {
-    padding-block: calc(#{$space-md} - #{$space-2xs});
-  }
+  // Konstant. Hier stand eine Gegenrechnung zur Polsterung des Balkens — die
+  // stimmte nur im Endzustand und liess die Hoehe waehrend der Ueberblendung
+  // einbrechen. Jetzt aendert sich an der Hoehe ueberhaupt nichts mehr, also
+  // gibt es auch nichts gegenzurechnen.
 }
 
 .site-header__bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: $space-md;
-  border-radius: $radius-pill;
-  transition: background-color $dur $ease, box-shadow $dur $ease, padding $dur $ease;
+
+  // Nur waagerecht: Beschriftung und Schaltflaeche ruecken von den Kanten der
+  // Pille weg. Waagerechte Polsterung laesst die Hoehe des Kopfbereichs
+  // unberuehrt und kann die Rueckkopplung deshalb nicht ausloesen.
+  transition: padding-inline $dur $ease;
 
   .site-header--pinned & {
-    // Links mehr Luft als rechts: die Beschriftung rueckt sichtbar ein,
-    // waehrend die Schaltflaeche fast an der Kante der Pille sitzt.
-    padding: $space-2xs $space-2xs $space-2xs $space-md;
-    background-color: var(--material-chrome);
-    backdrop-filter: blur(14px);
-    // Zwei Ebenen: ein enger Saum, der die Kante zeichnet, und ein weiter,
-    // sehr schwacher Schatten, der die Pille vom Inhalt abhebt. Eine einzelne
-    // Angabe wirkt entweder hart oder schmutzig.
-    box-shadow:
-      0 1px 2px rgb(0 0 0 / 0.05),
-      0 8px 28px rgb(0 0 0 / 0.07);
+    padding-inline: $space-sm;
+  }
+}
+
+// Die Pille selbst — eine eigene Ebene ohne jeden Einfluss auf das Layout.
+// Waagerecht deckt sie den Balken genau ab, damit ihre Kanten mit dem Inhalt
+// fluchten; senkrecht ragt sie darueber hinaus. Daher kommt ihre Hoehe, ohne
+// dass der Balken dafuer wachsen muesste.
+.site-header__bar::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block: -$space-2xs;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: $radius-pill;
+  background-color: var(--material-chrome);
+  backdrop-filter: blur(14px);
+  // Zwei Ebenen: ein enger Saum, der die Kante zeichnet, und ein weiter,
+  // sehr schwacher Schatten, der die Pille vom Inhalt abhebt. Eine einzelne
+  // Angabe wirkt entweder hart oder schmutzig.
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 8px 28px rgb(0 0 0 / 0.07);
+
+  // Deckkraft bleibt auf dem Compositor: kein Layout, kein Neuzeichnen des
+  // Inhalts. Derselbe Grundsatz, der in underline-sweep und .entry__title
+  // schon steht.
+  opacity: 0;
+  transition: opacity $dur $ease;
+
+  .site-header--pinned & {
+    opacity: 1;
   }
 }
 

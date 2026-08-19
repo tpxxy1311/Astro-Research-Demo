@@ -40,13 +40,28 @@ const fallback = segments.length > 1 ? '/articles' : '/';
   const sentinel = document.querySelector('[data-header-sentinel]');
 
   if (header && sentinel) {
-    // rootMargin schiebt die Auslesekante 48 px ueber den Viewport hinaus: die
-    // Pille erscheint erst nach einem bewussten Stueck Scrollweg, nicht schon
-    // beim ersten Pixel.
-    new IntersectionObserver(
-      ([entry]) => header.classList.toggle('site-header--pinned', !entry.isIntersecting),
-      { rootMargin: '48px 0px 0px 0px' },
-    ).observe(sentinel);
+    // Zwei Schwellen statt einer. Mit nur einer kippt der Zustand bei jedem
+    // Zucken des Trackpads hin und her, weil dieselbe Kante in beide Richtungen
+    // gilt. Hier schaltet jeder Beobachter nur in eine Richtung, dazwischen
+    // liegt ein Totbereich, in dem nichts passiert.
+    //
+    // rootMargin waechst nach oben ueber den Viewport hinaus: je groesser der
+    // Wert, desto spaeter verlaesst der Messpunkt das Sichtfeld und desto
+    // weiter unten liegt die Schwelle.
+    const watch = (margin, act) =>
+      new IntersectionObserver(([entry]) => act(entry.isIntersecting), {
+        rootMargin: `${margin} 0px 0px 0px`,
+      }).observe(sentinel);
+
+    // Andocken erst deutlich unterhalb des Seitenanfangs …
+    watch('68px', (visible) => {
+      if (!visible) header.classList.add('site-header--pinned');
+    });
+
+    // … loesen erst wieder ganz nah dran.
+    watch('24px', (visible) => {
+      if (visible) header.classList.remove('site-header--pinned');
+    });
   }
 
   // Progressive Enhancement: der Knopf ist ein echter Link mit echtem Ziel und
