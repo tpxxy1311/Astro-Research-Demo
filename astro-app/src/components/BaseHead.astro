@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets';
 import { SITE_TITLE } from '../consts';
 
 interface Props {
@@ -20,6 +21,9 @@ const fullTitle = title === SITE_TITLE ? title : `${title} — ${SITE_TITLE}`;
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<!-- Gibt die @font-face-Regeln aus; preload, weil DM Sans die Grundschrift ist. -->
+<Font cssVariable="--font-dm-sans" preload />
 <link rel="canonical" href={canonical.href} />
 <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={new URL('rss.xml', Astro.site ?? Astro.url).href} />
 

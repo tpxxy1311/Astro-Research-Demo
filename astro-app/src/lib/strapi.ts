@@ -80,13 +80,7 @@ export interface Tag {
   slug: string;
 }
 
-export type PaperType =
-  | 'Bachelorarbeit'
-  | 'Masterarbeit'
-  | 'Seminararbeit'
-  | 'Hausarbeit'
-  | 'Paper'
-  | 'Projektarbeit';
+export type PaperType = 'Bachelor Thesis' | 'Master Thesis' | 'Project Report' | 'Paper';
 
 export interface Article {
   id: number;

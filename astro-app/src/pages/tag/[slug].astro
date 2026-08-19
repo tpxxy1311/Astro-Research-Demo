@@ -31,25 +31,25 @@ const { tag, tags, articles } = Astro.props;
 ---
 <BaseLayout title={`#${tag.name}`} description={`Alle Artikel zum Schlagwort ${tag.name}.`}>
   <div class="container page">
-    <p class="eyebrow">Schlagwort</p>
-    <h1 class="page__title">#{tag.name}</h1>
+    <header class="page__head">
+      <p class="eyebrow">Schlagwort</p>
+      <h1 class="title">{tag.name}</h1>
+    </header>
 
     <div class="page__filter">
       <TagList tags={tags} active={tag.slug} size="md" />
     </div>
 
-    <div class="page__content">
-      {
-        articles.length > 0 ? (
-          <div class="card-grid card-grid--two">
-            {articles.map((article) => (
-              <ArticleCard article={article} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState title={`Zu "#${tag.name}" ist noch kein Artikel veroeffentlicht.`} />
-        )
-      }
-    </div>
+    {
+      articles.length > 0 ? (
+        <div class="entries entries--list">
+          {articles.map((article, i) => (
+            <ArticleCard article={article} index={i + 1} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState title={`Zu "${tag.name}" ist noch kein Artikel veroeffentlicht.`} />
+      )
+    }
   </div>
 </BaseLayout>

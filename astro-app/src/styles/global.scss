@@ -8,6 +8,7 @@
 // dann Layout, dann Komponenten, zuletzt einzelne Seiten.
 
 // 1. Grundlagen
+@use 'base/fonts';
 @use 'base/theme';
 @use 'base/reset';
 @use 'base/typography';
@@ -22,8 +23,10 @@
 
 // 3. Komponenten — wiederverwendbare Bausteine
 @use 'components/button';
-@use 'components/card';
-@use 'components/card-grid';
+@use 'components/entry';
+@use 'components/feature';
+@use 'components/category-link';
+@use 'components/stretch-type';
 @use 'components/category-filter';
 @use 'components/empty-state';
 @use 'components/tag-list';

@@ -1,0 +1,210 @@
+// Artikelliste. Ein Markup, zwei Ansichten — welche gilt, entscheidet die
+// Modifier-Klasse am Container, nicht die Komponente:
+//
+//   .entries--list   redaktionelle Zeilen, Nummer und Meta in eigenen Spalten
+//   .entries--grid   Karten nebeneinander, mit Titelbild
+//
+// Hier stand fruehe der Grundsatz "Zeilen statt Karten, die Typografie traegt
+// die Struktur". Er ist bewusst aufgegeben: die Liste ist jetzt eine von zwei
+// gleichwertigen Ansichten. Was von der Ueberlegung bleibt, ist ihr Kern —
+// weil die Titel lang sind, werden sie in der Kartenansicht geclampt und eine
+// Stufe kleiner gesetzt, sonst stehen unterschiedlich hohe Karten nebeneinander.
+
+@use '../core' as *;
+
+.entries {
+  &--list {
+    // Die Oberkante der ersten Zeile schliesst die Liste nach oben ab.
+    border-top: 1px solid var(--color-fg);
+  }
+
+  &--grid {
+    display: grid;
+    gap: $space-lg;
+
+    @include mq($bp-sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mq($bp-md) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: $space-md;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- Eintrag
+.entry {
+  position: relative;
+  display: grid;
+  gap: $space-sm;
+
+  .entries--list & {
+    padding-block: $space-lg;
+    border-bottom: 1px solid var(--color-line);
+
+    @include mq($bp-md) {
+      // Nummer | Inhalt | Meta | Pfeil — der Pfeil bekommt eine eigene Spalte,
+      // damit er die rechtsbuendige Metaspalte nicht ueberlagert.
+      grid-template-columns: 3.5rem 1fr 11rem 1.25rem;
+      gap: $space-lg;
+      align-items: start;
+      padding-block: $space-xl;
+    }
+  }
+
+  // Karte: gestapelt, und als Flex-Spalte statt Grid, damit die Meta-Zeile
+  // per margin-top:auto an die Unterkante kann. Die Karten sind durch
+  // align-items:stretch des Containers ohnehin gleich hoch — ohne diesen
+  // Anker stehen ihre Meta-Zeilen je nach Titellaenge auf drei verschiedenen
+  // Hoehen, und die Reihe wirkt unaufgeraeumt.
+  .entries--grid & {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+}
+
+// Das Titelbild traegt nur die Karte — die Zeile bleibt bildlos.
+.entry__media {
+  overflow: hidden;
+  background-color: var(--color-surface);
+
+  img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    transition: transform $dur-slow $ease;
+  }
+
+  .entry:hover & img {
+    transform: scale(1.03);
+  }
+
+  .entries--list & {
+    display: none;
+  }
+}
+
+// Nummer und Pfeil gehoeren zur Zeile: in der Karte fehlt beiden die
+// Fluchtlinie, an der sie sich ausrichten wuerden.
+.entry__index,
+.entry__arrow {
+  .entries--grid & {
+    display: none;
+  }
+}
+
+.entry__index {
+  @include label;
+  color: var(--color-subtle);
+  font-variant-numeric: tabular-nums;
+  transition: color $dur $ease;
+
+  .entry:hover & {
+    color: var(--color-accent);
+  }
+}
+
+// Verhindert, dass lange Titel die Grid-Spalte sprengen.
+.entry__main {
+  min-width: 0;
+}
+
+.entry__title {
+  font-size: $text-title-2;
+  line-height: $leading-title-2;
+  letter-spacing: $track-title-2;
+  font-weight: 500;
+  text-wrap: balance;
+  // Nur transform animieren — bleibt auf dem Compositor.
+  transition: transform $dur $ease;
+
+  @include mq($bp-md) {
+    .entries--list .entry:hover & {
+      transform: translateX($space-2xs);
+    }
+  }
+
+  // In der Karte eine Stufe kleiner und auf drei Zeilen begrenzt.
+  .entries--grid & {
+    font-size: $text-title-3;
+    letter-spacing: $track-title-3;
+    @include line-clamp(3);
+  }
+}
+
+.entry__link {
+  text-decoration: none;
+
+  // Spannt den ganzen Eintrag als Klickflaeche auf, ohne Links zu verschachteln.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.entry__abstract {
+  @include line-clamp(2);
+  margin-top: $space-2xs;
+  max-width: 44ch;
+  font-size: $text-small;
+  line-height: 1.7;
+  color: var(--color-muted);
+
+  // Die Spalte deckelt die Zeilenlaenge schon, dafuer ist mehr Hoehe da.
+  .entries--grid & {
+    @include line-clamp(3);
+    max-width: none;
+  }
+}
+
+.entry__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2xs $space-sm;
+  @include label;
+  color: var(--color-subtle);
+
+  // In der Karte sitzt die Meta-Zeile am Fuss, damit die Reihe eine
+  // gemeinsame Grundlinie hat.
+  .entries--grid & {
+    margin-top: auto;
+    padding-top: $space-xs;
+  }
+
+  // Rechtsbuendige Spalte nur in der Zeilenansicht.
+  @include mq($bp-md) {
+    .entries--list & {
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+      gap: $space-2xs;
+    }
+  }
+}
+
+.entry__arrow {
+  display: none;
+
+  @include mq($bp-md) {
+    .entries--list & {
+      display: block;
+      justify-self: end;
+      font-size: $text-small;
+      line-height: $leading-title-2;
+      color: var(--color-accent);
+      opacity: 0;
+      // Laeuft in die Richtung ein, in die der Link fuehrt.
+      transform: translateX(-$space-2xs);
+      transition: opacity $dur $ease, transform $dur $ease;
+    }
+
+    .entries--list .entry:hover & {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}

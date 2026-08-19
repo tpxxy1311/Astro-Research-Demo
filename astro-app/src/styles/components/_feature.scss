@@ -1,0 +1,102 @@
+// Hervorgehobener Artikel: halbseitig, Bild neben Text. Wird nur auf der
+// Startseite eingesetzt und hat mit der Artikelliste kein Markup gemeinsam —
+// deshalb eigener Block und eigene Datei.
+
+@use '../core' as *;
+
+.feature {
+  position: relative;
+  display: grid;
+  gap: $space-md;
+  padding-bottom: $space-xl;
+
+  @include mq($bp-md) {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-2xl;
+    align-items: center;
+  }
+}
+
+// Ohne Titelbild faellt die zweite Spalte weg.
+.feature--no-media {
+  @include mq($bp-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature__media {
+  overflow: hidden;
+  background-color: var(--color-surface);
+
+  img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform $dur-slow $ease;
+  }
+
+  .feature:hover & img {
+    transform: scale(1.03);
+  }
+}
+
+// Verhindert, dass lange Titel die Grid-Spalte sprengen.
+.feature__body {
+  min-width: 0;
+}
+
+.feature__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2xs $space-md;
+  padding-bottom: $space-sm;
+  @include label;
+  color: var(--color-subtle);
+}
+
+.feature__title {
+  font-size: $text-title-2;
+  line-height: $leading-title-2;
+  letter-spacing: $track-title-2;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+.feature__link {
+  text-decoration: none;
+
+  // Spannt die ganze Karte als Klickflaeche auf, ohne Links zu verschachteln.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.feature__abstract {
+  @include line-clamp(3);
+  margin-top: $space-sm;
+  max-width: 42ch;
+  font-size: $text-small;
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+
+.feature__more {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2xs;
+  margin-top: $space-md;
+  color: var(--color-fg);
+
+  &::after {
+    content: '\2192';
+    transition: transform $dur $ease;
+  }
+
+  .feature:hover &::after {
+    transform: translateX($space-3xs);
+  }
+}

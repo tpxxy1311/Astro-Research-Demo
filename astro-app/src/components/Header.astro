@@ -12,21 +12,9 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
 ---
 <header class="site-header">
   <nav class="site-header__inner">
-    <a class="site-header__brand" href="/">{SITE_TITLE}</a>
-    <ul class="site-header__nav">
-      {
-        links.map((link) => (
-          <li>
-            <a
-              class="site-header__link"
-              href={link.href}
-              aria-current={isActive(link.href) ? 'page' : undefined}
-            >
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+    <p class="site-header__brand">{SITE_TITLE}</p>
+    <button>
+      
+    </button>
   </nav>
 </header>

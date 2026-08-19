@@ -16,29 +16,32 @@ const avatar = mediaUrlFormat(author?.avatar, 'small');
     {
       author ? (
         <>
-          <div class="profile">
-            {avatar && (
-              <img
-                class="profile__avatar"
-                src={avatar}
-                alt={author.avatar?.alternativeText ?? author.name}
-              />
-            )}
-            <div>
-              <h1 class="profile__name">{author.name}</h1>
-              {author.socialLinks?.length > 0 && (
-                <ul class="profile__links">
-                  {author.socialLinks.map((link) => (
-                    <li>
-                      <a href={link.url} target="_blank" rel="noopener noreferrer me">
-                        {link.platform}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+          <header class="page__head">
+            <p class="eyebrow">Ueber mich</p>
+            <div class="profile">
+              {avatar && (
+                <img
+                  class="profile__avatar"
+                  src={avatar}
+                  alt={author.avatar?.alternativeText ?? author.name}
+                />
               )}
+              <div>
+                <h1 class="title">{author.name}</h1>
+                {author.socialLinks?.length > 0 && (
+                  <ul class="profile__links">
+                    {author.socialLinks.map((link) => (
+                      <li>
+                        <a href={link.url} target="_blank" rel="noopener noreferrer me">
+                          {link.platform}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-          </div>
+          </header>
 
           <div class="page__body">
             <BlocksRenderer content={author.bio} />
@@ -46,13 +49,14 @@ const avatar = mediaUrlFormat(author?.avatar, 'small');
         </>
       ) : (
         <>
-          <h1 class="page__title">Ueber mich</h1>
-          <div class="page__body">
-            <EmptyState
-              title="Es ist noch kein Autorenprofil hinterlegt."
-              hint="Im Strapi-Admin unter Content Manager → Author ausfuellen und veroeffentlichen."
-            />
-          </div>
+          <header class="page__head">
+            <p class="eyebrow">Ueber mich</p>
+            <h1 class="title">Autorenprofil</h1>
+          </header>
+          <EmptyState
+            title="Es ist noch kein Autorenprofil hinterlegt."
+            hint="Im Strapi-Admin unter Content Manager → Author ausfuellen und veroeffentlichen."
+          />
         </>
       )
     }

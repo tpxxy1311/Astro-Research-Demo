@@ -5,32 +5,111 @@
 .button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
+  gap: $space-2xs;
+  padding: $space-sm $space-md;
   border: 1px solid transparent;
-  border-radius: $radius-md;
-  font-size: 0.875rem;
-  font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color $transition, border-color $transition, color $transition;
+  transition: background-color $dur $ease, border-color $dur $ease, color $dur $ease,
+    transform $dur-fast $ease;
+
+  // Der Reset gibt den Ring nur an <a> — als <button> braucht die Schaltflaeche
+  // ihn hier.
+  @include focus-ring;
+
+  // Rueckmeldung beim Druck, nicht erst beim Loslassen.
+  &:active {
+    transform: scale(0.98);
+  }
 
   &--primary {
-    background-color: var(--color-accent);
-    color: var(--color-accent-text);
+    @include label;
+    background-color: var(--color-inverse-bg);
+    color: var(--color-inverse-fg);
 
     &:hover {
-      background-color: var(--color-accent-hover);
+      background-color: var(--color-accent);
+      color: var(--color-accent-ink);
     }
   }
 
   &--secondary {
-    border-color: var(--color-border-strong);
-    color: var(--color-text-muted);
+    @include label;
+    border-color: var(--color-line-strong);
+    color: var(--color-fg);
 
     &:hover {
-      border-color: var(--color-text-subtle);
-      color: var(--color-text-strong);
+      border-color: var(--color-accent);
+      color: var(--color-accent);
     }
   }
+
+  // Gemeinsame Form der runden Varianten: gemischte Schreibung statt Versalien,
+  // kompaktere Polsterung. Die runde Form ist bewusst die Ausnahme von
+  // "Kanten bleiben scharf" — sie macht aus beiden eigenstaendige Ziele.
+  &--pill,
+  &--switch {
+    padding: $space-xs $space-md;
+    border-radius: $radius-pill;
+    font-size: $text-body;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: $track-lead;
+  }
+
+  // Weiche Pille: Flaeche statt Kontur.
+  &--pill {
+    gap: $space-2xs;
+    background-color: var(--color-surface);
+    color: var(--color-fg);
+
+    &:hover {
+      background-color: var(--color-accent);
+      color: var(--color-accent-ink);
+    }
+
+    // Der Pfeil rueckt beim Hover nach, wie schon bei den Textlinks.
+    .button__arrow {
+      transition: transform $dur $ease;
+    }
+
+    &:hover .button__arrow {
+      transform: translateX($space-3xs);
+    }
+  }
+
+  // Segment eines Umschalters. Der gedrueckte Zustand steht ausschliesslich in
+  // aria-pressed — eine zusaetzliche Zustandsklasse muesste JS synchron halten
+  // und koennte von der Vorlesereihenfolge abweichen.
+  &--switch {
+    background-color: transparent;
+    border-color: var(--color-line-strong);
+    color: var(--color-fg);
+
+    &:hover {
+      border-color: var(--color-fg);
+    }
+
+    &[aria-pressed='true'] {
+      background-color: var(--color-inverse-bg);
+      border-color: var(--color-inverse-bg);
+      color: var(--color-inverse-fg);
+    }
+  }
+}
+
+// Mehrere Schaltflaechen als eine Einheit.
+.button-group {
+  display: inline-flex;
+  gap: $space-2xs;
+}
+
+// Der Pfeil ist inline-SVG und kein Glyph: DM Sans liefert im Latin-Subset
+// weder U+2192 noch U+21B3, ein Textpfeil landete also in einer beliebigen
+// Systemschrift und passte in Strichstaerke und Groesse nicht zur Beschriftung.
+.button__arrow {
+  // Skaliert mit der Beschriftung, faerbt sich ueber currentColor mit.
+  width: 1em;
+  height: 1em;
+  flex: none;
 }

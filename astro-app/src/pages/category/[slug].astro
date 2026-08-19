@@ -34,26 +34,26 @@ const { category, categories, articles } = Astro.props;
   description={category.description ?? `Alle Artikel in der Kategorie ${category.name}.`}
 >
   <div class="container page">
-    <p class="eyebrow">Kategorie</p>
-    <h1 class="page__title">{category.name}</h1>
-    {category.description && <p class="page__lead">{category.description}</p>}
+    <header class="page__head">
+      <p class="eyebrow">Kategorie</p>
+      <h1 class="title">{category.name}</h1>
+      {category.description && <p class="lead">{category.description}</p>}
+    </header>
 
     <div class="page__filter">
       <CategoryFilter categories={categories} active={category.slug} />
     </div>
 
-    <div class="page__content">
-      {
-        articles.length > 0 ? (
-          <div class="card-grid card-grid--two">
-            {articles.map((article) => (
-              <ArticleCard article={article} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState title={`In "${category.name}" ist noch kein Artikel veroeffentlicht.`} />
-        )
-      }
-    </div>
+    {
+      articles.length > 0 ? (
+        <div class="entries entries--list">
+          {articles.map((article, i) => (
+            <ArticleCard article={article} index={i + 1} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState title={`In "${category.name}" ist noch kein Artikel veroeffentlicht.`} />
+      )
+    }
   </div>
 </BaseLayout>

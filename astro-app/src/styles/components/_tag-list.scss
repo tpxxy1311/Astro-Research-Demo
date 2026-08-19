@@ -1,44 +1,35 @@
-// Schlagwort-Chips
+// Schlagworte.
 
 @use '../core' as *;
 
 .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: $space-2xs;
 }
 
 .tag-list__tag {
+  @include label;
   display: inline-block;
+  padding: $space-2xs $space-xs;
+  border: 1px solid var(--color-line);
   border-radius: $radius-pill;
-  background-color: var(--color-chip-bg);
-  color: var(--color-chip-text);
-  font-weight: 500;
+  color: var(--color-muted);
   text-decoration: none;
-  transition: background-color $transition, color $transition;
+  transition: border-color $dur $ease, color $dur $ease, background-color $dur $ease;
 
   &:hover {
-    background-color: var(--color-chip-hover-bg);
-    color: var(--color-text-strong);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   &--active {
     background-color: var(--color-accent);
-    color: var(--color-accent-text);
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
 
     &:hover {
-      background-color: var(--color-accent);
-      color: var(--color-accent-text);
+      color: var(--color-accent-ink);
     }
   }
-}
-
-.tag-list--sm .tag-list__tag {
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
-}
-
-.tag-list--md .tag-list__tag {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
 }

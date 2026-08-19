@@ -62,7 +62,7 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
     {
       hasPaperInfo && (
         <aside class="paper">
-          <h2 class="eyebrow">Zugrundeliegende Arbeit</h2>
+          <h2 class="paper__label">Zugrundeliegende Arbeit</h2>
           {article.originalPaperTitle && (
             <p class="paper__title">{article.originalPaperTitle}</p>
           )}
@@ -85,14 +85,14 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
       <BlocksRenderer content={article.content} />
     </div>
 
-    {
+    <!-- {
       article.tags?.length > 0 && (
         <footer class="article__footer">
-          <h2 class="eyebrow article__footer-heading">Schlagworte</h2>
+          <h2 class="eyebrow">Schlagworte</h2>
           <TagList tags={article.tags} size="md" />
         </footer>
       )
-    }
+    } -->
 
     <nav class="article__back">
       <a href="/articles">&larr; Alle Artikel</a>

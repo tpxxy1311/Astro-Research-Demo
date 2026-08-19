@@ -1,20 +1,23 @@
-// Platzhalter, wenn kein Inhalt da ist
+// Platzhalter, wenn kein Inhalt da ist.
 
 @use '../core' as *;
 
 .empty-state {
-  padding: 4rem 1.5rem;
-  border: 1px dashed var(--color-border-strong);
-  border-radius: $radius-lg;
-  text-align: center;
+  padding-block: $space-2xl;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .empty-state__title {
-  color: var(--color-text-muted);
+  font-size: $text-title-3;
+  line-height: $leading-title-2;
+  letter-spacing: $track-title-3;
+  color: var(--color-fg);
 }
 
 .empty-state__hint {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--color-text-subtle);
+  max-width: 34rem;
+  margin-top: $space-2xs;
+  font-size: $text-small;
+  color: var(--color-muted);
 }

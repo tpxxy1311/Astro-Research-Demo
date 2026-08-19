@@ -1,38 +1,48 @@
-// Fussbereich
+// Fussbereich — bewusst leise, klare Kante nach oben.
 
 @use '../core' as *;
 
 .site-footer {
-  margin-top: 6rem;
-  border-top: 1px solid var(--color-border);
+  margin-top: $space-3xl;
+  border-top: 1px solid var(--color-line);
 }
 
 .site-footer__inner {
   @include container;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding-block: 2.5rem;
-  font-size: 0.875rem;
-  color: var(--color-text-subtle);
+  gap: $space-md;
+  padding-block: $space-xl;
 
   @include mq($bp-sm) {
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
   }
 }
 
+.site-footer__note {
+  @include label;
+  color: var(--color-subtle);
+}
+
 .site-footer__links {
   display: flex;
-  gap: 1.25rem;
+  gap: $space-md;
+
+  @include mq($bp-sm) {
+    gap: $space-lg;
+  }
 
   a {
+    @include label;
+    @include underline-sweep;
     text-decoration: none;
-    transition: color $transition;
+    color: var(--color-muted);
+    transition: color $dur-fast $ease;
 
     &:hover {
-      color: var(--color-text-strong);
+      color: var(--color-fg);
     }
   }
 }

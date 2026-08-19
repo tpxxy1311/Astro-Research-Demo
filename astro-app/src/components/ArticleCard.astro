@@ -1,57 +1,61 @@
 ---
+// Ein Eintrag der Artikelliste — in beiden Ansichten dasselbe Markup.
+//
+// Welche Ansicht gilt, entscheidet die Modifier-Klasse am .entries-Container
+// (--list oder --grid), nicht ein Prop hier. Die Komponente liefert deshalb
+// immer alles; Bild, Nummer und Pfeil blendet das CSS je Ansicht aus. So bleibt
+// ein spaeterer Umschalter ein Klassentausch auf einem Element, statt beide
+// Baeume zu rendern oder clientseitig neu zu bauen.
 import type { Article } from '../lib/strapi';
 import { formatDate, mediaUrlFormat, estimateReadingTime } from '../lib/strapi';
 
 interface Props {
   article: Article;
-  /** groessere Darstellung fuer die Startseite */
-  featured?: boolean;
+  /** laufende Nummer, zweistellig ausgegeben — nur die Zeilenansicht zeigt sie */
+  index?: number;
 }
 
-const { article, featured = false } = Astro.props;
+const { article, index } = Astro.props;
 
-const cover = mediaUrlFormat(article.coverImage, featured ? 'medium' : 'small');
+// 'medium' statt 'small': in der Grid-Ansicht ist eine Karte auf grossen
+// Schirmen rund 380 px breit, was auf Retina-Geraeten 760 px verlangt.
+const cover = mediaUrlFormat(article.coverImage, 'medium');
 const minutes = article.readingTime ?? estimateReadingTime(article.content);
+const indexLabel = index === undefined ? null : String(index).padStart(2, '0');
 ---
-<article class:list={['card', featured && 'card--featured']}>
-  {
-    cover && (
-      <div class="card__media">
-        <img
-          src={cover}
-          alt={article.coverImage?.alternativeText ?? ''}
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-    )
-  }
-
-  <div class="card__body">
-    <div class="card__meta">
-      {
-        article.category && (
-          <a class="card__category" href={`/category/${article.category.slug}`}>
-            {article.category.name}
-          </a>
-        )
-      }
-      <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
-      <span>{minutes} Min. Lesezeit</span>
+<article class="entry">
+  {cover && (
+    <div class="entry__media">
+      <img
+        src={cover}
+        alt={article.coverImage?.alternativeText ?? ''}
+        loading="lazy"
+        decoding="async"
+      />
     </div>
+  )}
 
-    <h2 class="card__title">
-      <a class="card__link" href={`/articles/${article.slug}`}>{article.title}</a>
+  {indexLabel && <span class="entry__index">{indexLabel}</span>}
+
+  <div class="entry__main">
+    <h2 class="entry__title">
+      <a class="entry__link" href={`/articles/${article.slug}`}>
+        {article.title}
+      </a>
     </h2>
-
-    <p class="card__abstract">{article.abstract}</p>
-
-    {
-      article.originalPaperType && (
-        <p class="card__source">
-          Basiert auf einer <strong>{article.originalPaperType}</strong>
-        </p>
-      )
-    }
+    <p class="entry__abstract">{article.abstract}</p>
   </div>
+
+  <div class="entry__meta">
+    {article.category && (
+      <a class="category-link" href={`/category/${article.category.slug}`}>
+        {article.category.name}
+      </a>
+    )}
+    <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
+    <span>{minutes} Min.</span>
+    {article.originalPaperType && <span>{article.originalPaperType}</span>}
+  </div>
+
+  <span class="entry__arrow" aria-hidden="true">&#8594;</span>
 </article>

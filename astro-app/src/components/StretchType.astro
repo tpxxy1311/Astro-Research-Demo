@@ -1,0 +1,135 @@
+---
+// Sperrung aus zwei Haelften, die sich die Containerbreite teilen: wandert der
+// Cursor nach links, staucht die linke Haelfte und die rechte streckt sich —
+// und umgekehrt.
+//
+// Die Verzerrung macht SVG selbst. `textLength` gibt jeder Haelfte eine
+// Sollbreite vor, `lengthAdjust="spacingAndGlyphs"` verteilt die Differenz zur
+// natuerlichen Breite auf Glyphen und Buchstabenabstaende. Es bleibt damit
+// echter Text im DOM — kein Pfad-Export, keine Variable Font mit Breitenachse.
+
+interface Props {
+  /** Linke Haelfte der Sperrung. */
+  left: string;
+  /** Rechte Haelfte. */
+  right: string;
+  /**
+   * Anteil der Gesamtbreite, den die linke Haelfte im Ruhezustand belegt.
+   * Richtig ist ihr natuerlicher Breitenanteil — sonst wirkt schon der
+   * neutrale Zustand gestaucht.
+   */
+  balance?: number;
+  /**
+   * Wie weit die Verteilung nach beiden Seiten kippen darf. 0 schaltet den
+   * Effekt aus, 0.3 laesst die linke Haelfte zwischen 20 % und 80 % wandern.
+   */
+  extent?: number;
+  /**
+   * Versalhoehe in viewBox-Einheiten, bezogen auf 1000 Einheiten Breite —
+   * der einzige Groessenregler, und zugleich der Grad der Stauchung: je hoeher
+   * der Wert, desto mehr natuerliche Breite muss in dieselben 1000 Einheiten.
+   *
+   * Unverzerrt stehen die Buchstaben bei `700 / Vorschubbreite in em` — die
+   * haengt am Schriftgewicht, weil fette Schnitte breiter laufen. Fuer
+   * TIMPETERSRESEARCH in DM Sans sind das 68.6 bei wght 500 und 66.3 bei 700.
+   */
+  cap?: number;
+}
+
+const { left, right, balance = 0.5, extent = 0.3, cap = 75 } = Astro.props;
+
+// Die viewBox-Breite ist reine Recheneinheit: das SVG skaliert ohnehin auf die
+// Containerbreite, absolute Pixel gibt es hier nicht.
+const WIDTH = 1000;
+
+// DM Sans hat eine Versalhoehe von 700 bei 1000 Einheiten pro em (sCapHeight
+// aus der Fontdatei). Aus der gewuenschten Versalhoehe folgt damit die
+// Schriftgroesse — und die Grundlinie liegt genau auf der viewBox-Unterkante.
+const CAP_RATIO = 0.7;
+const fontSize = cap / CAP_RATIO;
+
+// Ruhezustand direkt im Markup: laeuft kein JS, bleibt genau diese Verteilung
+// stehen. Der Titel ist also nie leer und springt beim Laden nicht.
+const split = WIDTH * balance;
+---
+<svg
+  class="stretch-type"
+  viewBox={`0 0 ${WIDTH} ${cap}`}
+  data-stretch-type
+  data-balance={balance}
+  data-extent={extent}
+  aria-hidden="true"
+  focusable="false"
+>
+  <text
+    class="stretch-type__half"
+    data-half="left"
+    x="0"
+    y={cap}
+    font-size={fontSize}
+    textLength={split}
+    lengthAdjust="spacingAndGlyphs">{left}</text>
+  <text
+    class="stretch-type__half"
+    data-half="right"
+    x={split}
+    y={cap}
+    font-size={fontSize}
+    textLength={WIDTH - split}
+    lengthAdjust="spacingAndGlyphs">{right}</text>
+</svg>
+<span class="stretch-type__label">{left}{right}</span>
+
+<script>
+  // Muss zur viewBox-Breite in dieser Komponente passen.
+  const WIDTH = 1000;
+
+  for (const svg of document.querySelectorAll<SVGSVGElement>('[data-stretch-type]')) {
+    // Ohne feines Zeigegeraet gibt es keine Cursorposition, und bei reduzierter
+    // Bewegung ist der Effekt unerwuenscht. In beiden Faellen bleibt die im
+    // Markup gesetzte Ruheverteilung stehen.
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) continue;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
+
+    const left = svg.querySelector<SVGTextElement>('[data-half="left"]');
+    const right = svg.querySelector<SVGTextElement>('[data-half="right"]');
+    if (!left || !right) continue;
+
+    const balance = Number(svg.dataset.balance);
+    const extent = Number(svg.dataset.extent);
+
+    let target = balance;
+    let value = balance;
+    let frame = 0;
+
+    const draw = () => {
+      // Traegheit: der Wert laeuft dem Cursor nach. Ohne diese Daempfung klebt
+      // die Sperrung am Zeiger und wirkt mechanisch.
+      value += (target - value) * 0.09;
+
+      // Beide Haelften sind linksbuendig gesetzt — die rechte wandert mit der
+      // Nahtstelle mit. Das ist verlaesslicher als text-anchor="end", dessen
+      // Zusammenspiel mit textLength die Browser unterschiedlich auslegen.
+      const split = WIDTH * value;
+      left.setAttribute('textLength', split.toFixed(2));
+      right.setAttribute('x', split.toFixed(2));
+      right.setAttribute('textLength', (WIDTH - split).toFixed(2));
+
+      // Liegen Ist und Soll praktisch zusammen, schlaeft die Schleife wieder
+      // ein statt jeden Frame umsonst zu rechnen.
+      frame = Math.abs(target - value) > 0.0002 ? requestAnimationFrame(draw) : 0;
+    };
+
+    addEventListener(
+      'pointermove',
+      (event) => {
+        // Bezug ist das Fenster, nicht das Element: die Sperrung soll auch
+        // reagieren, wenn der Zeiger weit ueber oder unter ihr liegt.
+        const position = event.clientX / window.innerWidth;
+        target = balance + (position - 0.5) * 2 * extent;
+        if (!frame) frame = requestAnimationFrame(draw);
+      },
+      { passive: true },
+    );
+  }
+</script>

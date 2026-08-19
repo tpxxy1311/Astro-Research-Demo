@@ -1,4 +1,7 @@
-// Schrift-Defaults und kleine, wiederkehrende Textbausteine.
+// Schrift-Defaults und wiederkehrende Textbausteine.
+//
+// Hierarchie entsteht aus Groesse, Gewicht und Zeilenabstand als Satz —
+// nicht aus Groesse allein.
 
 @use '../core' as *;
 
@@ -8,25 +11,46 @@ h3,
 h4,
 h5,
 h6 {
-  line-height: $line-height-tight;
+  font-weight: 500;
   text-wrap: balance;
-  color: var(--color-text-strong);
+  color: var(--color-fg);
 }
 
 strong {
   font-weight: 600;
 }
 
-code,
-pre {
-  font-family: $font-mono;
+
+/// Groesste Stufe — nur einmal pro Seite.
+.display {
+  font-size: $text-display;
+  line-height: $leading-display;
+  letter-spacing: $track-display;
+  font-weight: 500;
+  text-wrap: balance;
 }
 
-/// Kleine Grossbuchstaben-Ueberschrift ueber einem Abschnitt.
+/// Seitentitel.
+.title {
+  font-size: $text-title-1;
+  line-height: $leading-title-1;
+  letter-spacing: $track-title-1;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+/// Vorspann unter einem Titel.
+.lead {
+  max-width: 34rem;
+  font-size: $text-lead;
+  line-height: $leading-lead;
+  letter-spacing: $track-lead;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+/// Kleine Versalien-Rubrik ueber einem Abschnitt.
 .eyebrow {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-subtle);
+  @include label;
+  color: var(--color-subtle);
 }

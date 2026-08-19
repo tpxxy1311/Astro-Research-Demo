@@ -14,9 +14,11 @@
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^7.2.3"
+    "astro": "^7.2.3",
+    "astro-icon": "^1.2.0"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.124",
     "sass": "^1.102.0"
   }
 }

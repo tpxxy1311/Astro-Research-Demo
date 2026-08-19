@@ -1,0 +1,38 @@
+// Sperrung, die sich unter dem Cursor umverteilt — siehe StretchType.astro.
+//
+// Groesse steht hier nirgends: das SVG nimmt die volle Containerbreite und
+// leitet seine Hoehe aus dem Seitenverhaeltnis der viewBox ab. Die
+// Versalhoehe ist damit immer `Containerbreite × cap / 1000`.
+
+@use '../core' as *;
+
+.stretch-type {
+  width: 100%;
+  height: auto;
+
+  // Runde Buchstaben ueberschiessen die Versalhoehe optisch um rund ein
+  // Prozent. Die viewBox schliesst genau auf der Versalhoehe ab, deshalb
+  // duerfen S und C oben und unten hinausragen, statt flach abgeschnitten
+  // zu werden.
+  overflow: visible;
+}
+
+.stretch-type__half {
+  fill: currentColor;
+  font-family: $font-sans;
+  font-weight: 700;
+
+  // Das Tracking macht hier textLength. Ein zusaetzlicher Wert wuerde nur
+  // gegen die Stauchung arbeiten — enger wird die Sperrung ueber `cap`.
+  letter-spacing: 0;
+
+  // Die Glyphen werden staerker skaliert als im Fliesstext; geometrisch
+  // exaktes Rendern haelt die Strichstaerken dabei gleichmaessig.
+  text-rendering: geometricPrecision;
+}
+
+// Der volle Text fuer Screenreader und Suchmaschinen: das SVG ist
+// aria-hidden, weil die Aufteilung in zwei Haelften rein visuell ist.
+.stretch-type__label {
+  @include visually-hidden;
+}

@@ -22,11 +22,14 @@ body {
   display: flex;
   flex-direction: column;
   font-family: $font-sans;
-  line-height: $line-height-normal;
+  font-size: $text-body;
+  line-height: $leading-body;
+  letter-spacing: $track-body;
   background-color: var(--color-bg);
-  color: var(--color-text);
+  color: var(--color-fg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
 }
 
 img,
@@ -56,11 +59,18 @@ ol {
   list-style: none;
 }
 
-// Fussnoten-Sprungziele nicht unter den Sticky-Header schieben.
-:target {
-  scroll-margin-top: 6rem;
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 
+// Fussnoten-Sprungziele nicht unter die Kopfzeile schieben.
+:target {
+  scroll-margin-top: $space-2xl;
+}
+
+// Sanfterer Ersatz statt gar keiner Rueckmeldung: Farb- und Deckkraft-
+// wechsel bleiben, Bewegung im Raum entfaellt.
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

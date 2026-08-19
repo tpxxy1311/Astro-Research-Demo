@@ -476,14 +476,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     originalPaperFile: Schema.Attribute.Media<'files'>;
     originalPaperTitle: Schema.Attribute.String;
     originalPaperType: Schema.Attribute.Enumeration<
-      [
-        'Bachelorarbeit',
-        'Masterarbeit',
-        'Seminararbeit',
-        'Hausarbeit',
-        'Paper',
-        'Projektarbeit',
-      ]
+      ['Bachelor Thesis', 'Master Thesis', 'Project Report', 'Paper']
     >;
     publishedAt: Schema.Attribute.DateTime;
     publishedDate: Schema.Attribute.Date & Schema.Attribute.Required;

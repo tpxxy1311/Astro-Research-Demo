@@ -12,9 +12,21 @@
 /// Zentrierter Inhaltsbereich mit Seitenrand.
 @mixin container($width: $width-wide) {
   width: 100%;
-  max-width: $width;
   margin-inline: auto;
   padding-inline: $gutter;
+
+  @include mq($bp-md) {
+    padding-inline: $gutter;
+  }
+}
+
+/// Kleine Versalien-Auszeichnung fuer Metazeilen und Rubriken.
+@mixin label {
+  font-size: $text-label;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: $track-label;
 }
 
 /// Text nach n Zeilen abschneiden.
@@ -29,9 +41,31 @@
 /// Sichtbarer Fokusring nur bei Tastaturbedienung.
 @mixin focus-ring {
   &:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 2px;
-    border-radius: $radius-sm;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+}
+
+/// Unterstreichung, die beim Hover von links einlaeuft.
+/// Animiert nur transform — bleibt damit auf dem Compositor.
+@mixin underline-sweep($color: var(--color-accent), $thickness: 1px) {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.15em;
+    height: $thickness;
+    background-color: $color;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform $dur $ease;
+  }
+
+  &:hover::after,
+  &[aria-current='page']::after {
+    transform: scaleX(1);
   }
 }
 

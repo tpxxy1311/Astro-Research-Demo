@@ -5,44 +5,39 @@
 .profile {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: $space-md;
+  padding-bottom: $space-lg;
 
   @include mq($bp-sm) {
     flex-direction: row;
     align-items: center;
+    gap: $space-lg;
   }
+}
 
-  &__avatar {
-    flex-shrink: 0;
-    width: 6rem;
-    height: 6rem;
-    border-radius: $radius-pill;
-    object-fit: cover;
-  }
+.profile__avatar {
+  flex-shrink: 0;
+  width: 5rem;
+  height: 5rem;
+  border-radius: $radius-pill;
+  object-fit: cover;
+}
 
-  &__name {
-    font-size: 2.25rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-  }
+.profile__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+  margin-top: $space-sm;
 
-  &__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 0.75rem;
-    font-size: 0.875rem;
+  a {
+    @include label;
+    @include underline-sweep;
+    text-decoration: none;
+    color: var(--color-muted);
+    transition: color $dur-fast $ease;
 
-    a {
-      text-decoration: underline;
-      text-decoration-color: var(--color-border-strong);
-      text-underline-offset: 0.25em;
-      color: var(--color-text-muted);
-      transition: color $transition;
-
-      &:hover {
-        color: var(--color-text-strong);
-      }
+    &:hover {
+      color: var(--color-fg);
     }
   }
 }

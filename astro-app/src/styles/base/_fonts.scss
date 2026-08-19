@@ -1,0 +1,18 @@
+// Selbst gehostete Schriften. Muss vor allen Regeln stehen, die sie
+// verwenden — deshalb als erstes Partial in global.scss eingebunden.
+//
+// WOFF2 zuerst: rund 40 % kleiner als die OTF-Quelle. Die OTF bleibt nur
+// als Fallback fuer Browser ohne WOFF2-Support stehen.
+//
+// font-display: swap — der Text ist sofort in Georgia lesbar und wird
+// ausgetauscht, sobald die Schrift da ist. Kein unsichtbarer Text.
+
+@font-face {
+  font-family: 'ITC Garamond';
+  src: url('/fonts/ITCGaramondStd-LtCond.woff2') format('woff2'),
+       url('/fonts/ITCGaramondStd-LtCond.otf') format('opentype');
+  // Der Schnitt ist Light Condensed: usWeightClass 300, aufrecht.
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}

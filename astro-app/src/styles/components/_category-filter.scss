@@ -1,37 +1,41 @@
-// Kategorie-Reiter
+// Kategorie-Auswahl als Textzeile — Reiter waeren fuer vier Eintraege
+// zu viel Apparat.
 
 @use '../core' as *;
 
 .category-filter {
-  border-bottom: 1px solid var(--color-border);
+  // Damit das eigene overflow-x auch als Flex-Kind greift und die Zeile nicht
+  // aufspannt, statt zu scrollen.
+  min-width: 0;
   overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .category-filter__list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  margin-bottom: -1px;
+  gap: $space-md;
+
+  @include mq($bp-sm) {
+    gap: $space-lg;
+  }
 }
 
 .category-filter__link {
+  @include label;
+  @include underline-sweep;
   display: inline-block;
-  padding: 0.75rem 1rem;
-  border-bottom: 2px solid transparent;
-  font-size: 0.875rem;
+  padding-block: $space-3xs;
   white-space: nowrap;
   text-decoration: none;
-  color: var(--color-text-subtle);
-  transition: border-color $transition, color $transition;
+  color: var(--color-subtle);
+  transition: color $dur-fast $ease;
 
-  &:hover {
-    border-bottom-color: var(--color-border-strong);
-    color: var(--color-text-strong);
-  }
-
+  &:hover,
   &[aria-current='page'] {
-    border-bottom-color: var(--color-accent);
-    font-weight: 500;
-    color: var(--color-text-strong);
+    color: var(--color-fg);
   }
 }

@@ -1,0 +1,17 @@
+// Kategorie-Verweis innerhalb eines Eintrags. Eigener Block, weil ihn sowohl
+// .entry als auch .feature tragen — als .entry__category waere er an den
+// falschen Block gebunden.
+
+@use '../core' as *;
+
+.category-link {
+  position: relative;
+  z-index: 1; // ueber der aufgespannten Klickflaeche, damit klickbar
+  text-decoration: none;
+  color: var(--color-accent);
+  transition: opacity $dur-fast $ease;
+
+  &:hover {
+    opacity: 0.65;
+  }
+}

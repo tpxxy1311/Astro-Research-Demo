@@ -1,12 +1,13 @@
-// Einzelartikel inkl. Paper-Box
+// Einzelartikel: schmale Lesespalte, grosszuegige Kopfzone,
+// Originalarbeit als eigener Block.
 
 @use '../core' as *;
 
 .article {
-  padding-block: 3rem;
+  padding-block: $space-2xl $space-3xl;
 
-  @include mq($bp-sm) {
-    padding-block: 4rem;
+  @include mq($bp-md) {
+    padding-block: $space-3xl;
   }
 }
 
@@ -14,106 +15,139 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem 0.75rem;
-  font-size: 0.875rem;
-  color: var(--color-text-subtle);
+  gap: $space-2xs $space-md;
+  padding-bottom: $space-md;
+  @include label;
+  color: var(--color-subtle);
 }
 
 .article__category {
-  font-weight: 500;
+  @include underline-sweep;
   text-decoration: none;
-  color: var(--color-text-strong);
-  transition: color $transition;
-
-  &:hover {
-    color: var(--color-text-muted);
-  }
+  color: var(--color-accent);
 }
 
 .article__title {
-  margin-top: 1rem;
-  font-size: 2.25rem;
+  font-size: $text-title-1;
+  line-height: $leading-title-1;
+  letter-spacing: $track-title-1;
   font-weight: 700;
-  letter-spacing: -0.025em;
-
-  @include mq($bp-sm) {
-    font-size: 3rem;
-  }
 }
 
 .article__abstract {
-  margin-top: 1.5rem;
-  font-size: 1.25rem;
-  line-height: 1.6;
-  color: var(--color-text-muted);
+  margin-top: $space-md;
+  font-size: 1.5rem;
+  line-height: $leading-lead;
+  letter-spacing: $track-lead;
+  color: var(--color-muted);
+  text-wrap: pretty;
+  font-family: $font-serif;
 }
 
 .article__cover {
   width: 100%;
-  margin-top: 2.5rem;
-  border-radius: $radius-lg;
+  margin-top: $space-xl;
 }
 
+// -------------------------------------------------------- Originalarbeit
 .paper {
-  margin-top: 2.5rem;
-  padding: 1.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: $radius-lg;
-  background-color: var(--color-surface);
+  margin-top: $space-xl;
+  padding-block: $space-md;
+  border-top: 1px solid var(--color-fg);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.paper__label {
+  @include label;
+  color: var(--color-subtle);
 }
 
 .paper__title {
-  margin-top: 0.5rem;
+  margin-top: $space-2xs;
+  font-size: $text-title-3;
+  line-height: $leading-title-2;
+  letter-spacing: $track-title-3;
   font-weight: 500;
-  color: var(--color-text-strong);
 }
 
 .paper__type {
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
+  margin-top: $space-3xs;
+  font-size: $text-small;
+  color: var(--color-muted);
 }
 
 .paper__download {
-  margin-top: 1rem;
+  margin-top: $space-md;
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    // Der Pfeil zeigt vorab in die Richtung, in die die Aktion fuehrt.
+    transition: transform $dur $ease;
+  }
+
+  &:hover svg {
+    transform: translateY(2px);
   }
 }
 
 .paper__size {
-  font-weight: 400;
-  opacity: 0.7;
+  color: var(--color-subtle);
 }
 
+// Die Lesespalte laeuft in der Serif, das Interface bleibt in der Sans.
+// Der Schriftwechsel markiert damit den Uebergang von Navigation zu Text —
+// er traegt keine Hierarchie innerhalb des Artikels.
 .article__body {
-  margin-top: 2.5rem;
-  font-size: 1.125rem;
+  margin-top: $space-xl;
+  font-family: $font-sans;
+  // Von ITC Garamond liegt nur der Light-Condensed-Schnitt vor. Explizit
+  // gesetzt, damit kein Elternwert einen synthetischen Fettschnitt erzwingt.
+  font-weight: 300;
+  // Garamond hat eine kleine x-Hoehe und laeuft schmal: bei gleicher
+  // Punktgroesse wirkt sie spuerbar kleiner als die Sans. Der Aufschlag
+  // gleicht das optisch aus, statt die Token-Skala zu verbiegen.
+  font-size: 1.1875rem;
+}
+
+// Ueberschriften und Code im Artikel bleiben in der Sans bzw. Mono —
+// nur der eigentliche Fliesstext wechselt die Schrift.
+.article__body .blocks__heading {
+  font-family: $font-sans;
 }
 
 .article__footer {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--color-border);
-}
-
-.article__footer-heading {
-  margin-bottom: 0.75rem;
+  margin-top: $space-2xl;
+  padding-top: $space-lg;
+  border-top: 1px solid var(--color-line);
+  display: grid;
+  gap: $space-md;
 }
 
 .article__back {
-  margin-top: 3rem;
-  font-size: 0.875rem;
+  margin-top: $space-2xl;
 
   a {
+    @include label;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2xs;
     text-decoration: none;
-    color: var(--color-text-subtle);
-    transition: color $transition;
+    color: var(--color-muted);
+    transition: color $dur-fast $ease;
 
     &:hover {
-      color: var(--color-text-strong);
+      color: var(--color-fg);
+    }
+
+    // Der Pfeil laeuft in Richtung des Ziels voraus.
+    &::before {
+      content: '\2190';
+      transition: transform $dur $ease;
+    }
+
+    &:hover::before {
+      transform: translateX(-0.25rem);
     }
   }
 }

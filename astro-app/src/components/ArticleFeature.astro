@@ -1,0 +1,50 @@
+---
+// Hervorgehobener Artikel: halbseitig, Bild neben Text. War bis zuletzt der
+// featured-Zweig von ArticleCard — die beiden Zweige hatten allerdings keinen
+// gemeinsamen Knoten, nur die Ableitung im Frontmatter. Das waren zwei
+// Komponenten in einer Datei.
+import type { Article } from '../lib/strapi';
+import { formatDate, mediaUrlFormat, estimateReadingTime } from '../lib/strapi';
+
+interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+
+const cover = mediaUrlFormat(article.coverImage, 'medium');
+const minutes = article.readingTime ?? estimateReadingTime(article.content);
+---
+<article class:list={['feature', !cover && 'feature--no-media']}>
+  {cover && (
+    <div class="feature__media">
+      <img
+        src={cover}
+        alt={article.coverImage?.alternativeText ?? ''}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  )}
+
+  <div class="feature__body">
+    <div class="feature__meta">
+      {article.category && (
+        <a class="category-link" href={`/category/${article.category.slug}`}>
+          {article.category.name}
+        </a>
+      )}
+      <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
+      <span>{minutes} Min.</span>
+    </div>
+
+    <h2 class="feature__title">
+      <a class="feature__link" href={`/articles/${article.slug}`}>
+        {article.title}
+      </a>
+    </h2>
+
+    <p class="feature__abstract">{article.abstract}</p>
+    <span class="feature__more">Weiterlesen</span>
+  </div>
+</article>

@@ -19,7 +19,7 @@
     "originalPaperTitle": { "type": "string" },
     "originalPaperType": {
       "type": "enumeration",
-      "enum": ["Bachelorarbeit", "Masterarbeit", "Seminararbeit", "Hausarbeit", "Paper", "Projektarbeit"]
+      "enum": ["Bachelor Thesis", "Master Thesis", "Project Report", "Paper"]
     },
     "originalPaperFile": { "type": "media", "multiple": false, "required": false, "allowedTypes": ["files"] },
     "readingTime": { "type": "integer", "min": 1 },

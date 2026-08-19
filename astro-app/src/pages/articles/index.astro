@@ -17,44 +17,94 @@ const [articles, categories, tags] = await Promise.all([
   description="Alle aufbereiteten Arbeiten im Ueberblick — filterbar nach Kategorie und Schlagwort."
 >
   <div class="container page">
-    <h1 class="page__title">Artikel</h1>
-    <p class="page__lead">
-      {articles.length}
-      {articles.length === 1 ? 'Artikel' : 'Artikel'} insgesamt.
-    </p>
+    <header class="page__head">
+      <p class="eyebrow">Alle Arbeiten</p>
+      <h1 class="title">Artikel</h1>
+      <p class="page__count">
+        {articles.length} {articles.length === 1 ? 'Beitrag' : 'Beitraege'}
+      </p>
+    </header>
 
-    {
-      categories.length > 0 && (
-        <div class="page__filter">
-          <CategoryFilter categories={categories} active={null} />
-        </div>
-      )
-    }
+    <div class="page__toolbar">
+      {categories.length > 0 && <CategoryFilter categories={categories} active={null} />}
 
-    <div class="page__content">
       {
-        articles.length > 0 ? (
-          <div class="card-grid card-grid--two">
-            {articles.map((article) => (
-              <ArticleCard article={article} />
-            ))}
+        articles.length > 0 && (
+          <div class="button-group" role="group" aria-label="Ansicht" data-view-switch>
+            <button class="button button--switch" type="button" data-view="grid" aria-pressed="true">
+              Grid
+            </button>
+            <button class="button button--switch" type="button" data-view="list" aria-pressed="false">
+              List
+            </button>
           </div>
-        ) : (
-          <EmptyState
-            title="Noch keine Artikel veroeffentlicht."
-            hint="Lege im Strapi-Admin unter Content Manager → Article einen Eintrag an und veroeffentliche ihn."
-          />
         )
       }
     </div>
 
     {
+      articles.length > 0 ? (
+        <div class="entries entries--grid" data-view-target>
+          {articles.map((article, i) => (
+            <ArticleCard article={article} index={i + 1} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title="Noch keine Artikel veroeffentlicht."
+          hint="Lege im Strapi-Admin unter Content Manager → Article einen Eintrag an und veroeffentliche ihn."
+        />
+      )
+    }
+
+    {
       tags.length > 0 && (
         <section class="page__tags">
-          <h2 class="eyebrow page__tags-heading">Nach Schlagwort</h2>
+          <h2 class="eyebrow">Nach Schlagwort</h2>
           <TagList tags={tags} size="md" />
         </section>
       )
     }
   </div>
+
+  <script is:inline>
+    // Bewusst is:inline und direkt hinter der Liste: ein gebuendeltes Modul
+    // liefe erst nach dem Parsen, die gespeicherte Ansicht wuerde dann sichtbar
+    // umklappen. So steht sie schon vor dem ersten Paint.
+    (() => {
+      const group = document.querySelector('[data-view-switch]');
+      const list = document.querySelector('[data-view-target]');
+      if (!group || !list) return;
+
+      const KEY = 'articles-view';
+
+      const apply = (view) => {
+        list.classList.toggle('entries--grid', view === 'grid');
+        list.classList.toggle('entries--list', view === 'list');
+        for (const option of group.querySelectorAll('[data-view]')) {
+          // Der gedrueckte Zustand liegt nur hier — das CSS liest ihn mit.
+          option.setAttribute('aria-pressed', String(option.dataset.view === view));
+        }
+      };
+
+      // In abgeschotteten Browser-Modi wirft der Zugriff auf localStorage. Das
+      // darf den Umschalter nicht mitnehmen, er soll dann nur nichts merken.
+      let store = null;
+      try {
+        store = window.localStorage;
+      } catch {}
+
+      const stored = store?.getItem(KEY);
+      if (stored === 'grid' || stored === 'list') apply(stored);
+
+      group.addEventListener('click', (event) => {
+        const option = event.target.closest('[data-view]');
+        if (!option) return;
+        apply(option.dataset.view);
+        try {
+          store?.setItem(KEY, option.dataset.view);
+        } catch {}
+      });
+    })();
+  </script>
 </BaseLayout>

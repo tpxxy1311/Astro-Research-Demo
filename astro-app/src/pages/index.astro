@@ -1,6 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeLayout from '../layouts/HomeLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
+import ArticleFeature from '../components/ArticleFeature.astro';
+import StretchType from '../components/StretchType.astro';
+import { Icon } from 'astro-icon/components';
 import EmptyState from '../components/EmptyState.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getArticles, getAuthor } from '../lib/strapi';
@@ -10,43 +13,59 @@ const [articles, author] = await Promise.all([getArticles(), getAuthor()]);
 const featured = articles.filter((article) => article.featured).slice(0, 2);
 // Auf der Startseite nichts doppelt zeigen.
 const featuredIds = new Set(featured.map((article) => article.id));
-const latest = articles.filter((article) => !featuredIds.has(article.id)).slice(0, 6);
+// Drei fuellen die Kartenreihe auf grossen Schirmen genau aus.
+const latest = articles.filter((article) => !featuredIds.has(article.id)).slice(0, 3);
 ---
-<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<HomeLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <section class="container hero">
-    <h1 class="hero__title">Wissenschaftliche Arbeiten, ohne den Ballast.</h1>
-    <p class="hero__text">
-      {SITE_DESCRIPTION}
-      {author && <> Geschrieben von {author.name}.</>}
+    <h1 class="hero__wordmark">
+      {/* Beide Werte gelten fuer DM Sans wght 700, siehe _stretch-type.scss:
+          balance 0.508 = natuerlicher Breitenanteil von TIMPETERS
+          (Vorschubbreiten 5.367em zu 5.191em), cap 66 = Versalhoehe, bei der
+          die Buchstaben unverzerrt stehen. Wird das Gewicht geaendert,
+          gehoeren beide Zahlen nachgezogen. */}
+      <StretchType left="TIMPETERS" right="RESEARCH" balance={0.508} cap={66} />
+    </h1>
+    <p class="lead hero__text">
+      I'm a creative developer based near Offenburg, Germany, with a
+      passion for crafting web experiences that balance aesthetics,
+      performance, and thoughtful interactions. 
+      This site collects the papers and academic work I've written 
+      throughout my studies, 
+      reworked and presented in a way that balances scholarly depth with 
+      genuine readability. 
     </p>
-    <div class="hero__actions">
-      <a class="button button--primary" href="/articles">Alle Artikel</a>
-      <a class="button button--secondary" href="/about">Ueber mich</a>
-    </div>
   </section>
 
   {
     featured.length > 0 && (
       <section class="container section">
-        <h2 class="eyebrow section__heading">Hervorgehoben</h2>
-        <div class="card-grid">
-          {featured.map((article) => (
-            <ArticleCard article={article} featured />
-          ))}
+        <div class="section__header">
+          <h2 class="eyebrow">Hervorgehoben</h2>
         </div>
+        {featured.map((article) => (
+          <ArticleFeature article={article} />
+        ))}
       </section>
     )
   }
 
   <section class="container section">
     <div class="section__header">
-      <h2 class="eyebrow">Neueste Artikel</h2>
-      {articles.length > 0 && <a class="section__more" href="/articles">Alle ansehen &rarr;</a>}
+      <h2 class="eyebrow">Latest Publications</h2>
+      {articles.length > 0 && (
+        <a class="button button--pill" href="/articles">
+          {/* Scharfe Ecke — Lucides corner-down-right rundet sie mit einem
+              Bogen ab, deshalb liegt dieses eine Icon lokal in src/icons/. */}
+          <Icon class="button__arrow" name="corner-down-right" />
+          All Articles
+        </a>
+      )}
     </div>
 
     {
       latest.length > 0 ? (
-        <div class="card-grid card-grid--two">
+        <div class="entries entries--grid">
           {latest.map((article) => (
             <ArticleCard article={article} />
           ))}
@@ -61,4 +80,4 @@ const latest = articles.filter((article) => !featuredIds.has(article.id)).slice(
       )
     }
   </section>
-</BaseLayout>
+</HomeLayout>
