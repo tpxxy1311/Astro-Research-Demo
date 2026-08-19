@@ -1,0 +1,12 @@
+{
+  // Reines Static-Asset-Deployment: kein Worker-Skript, nur der fertige
+  // Astro-Build. Deshalb kein "main"-Eintrag.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "research-frontend",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./dist",
+    // Liefert die gebaute 404-Seite statt einer generischen Fehlerseite.
+    "not_found_handling": "404-page"
+  }
+}

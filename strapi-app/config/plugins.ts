@@ -33,6 +33,34 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
   },
   upload: {
     config: {
+      // In Produktion liegen die Uploads in einem R2-Bucket und werden ueber
+      // eine eigene Domain ausgeliefert — unabhaengig davon, ob Strapi gerade
+      // laeuft. Ohne gesetzte R2_*-Variablen (lokal) bleibt es beim
+      // Dateisystem-Provider, den Strapi mitbringt.
+      ...(env('R2_BUCKET')
+        ? {
+            provider: 'aws-s3',
+            providerOptions: {
+              baseUrl: env('R2_PUBLIC_URL'),
+              s3Options: {
+                endpoint: env('R2_ENDPOINT'),
+                region: 'auto',
+                credentials: {
+                  accessKeyId: env('R2_ACCESS_KEY_ID'),
+                  secretAccessKey: env('R2_SECRET_ACCESS_KEY'),
+                },
+                params: {
+                  Bucket: env('R2_BUCKET'),
+                },
+              },
+            },
+            actionOptions: {
+              upload: {},
+              uploadStream: {},
+              delete: {},
+            },
+          }
+        : {}),
       security: {
         allowedTypes: allowedMediaTypes,
         deniedTypes: deniedExecutableTypes,
