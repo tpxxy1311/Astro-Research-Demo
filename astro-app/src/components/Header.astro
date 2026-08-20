@@ -1,6 +1,7 @@
 ---
 import { SITE_TITLE } from '../consts';
 import { Icon } from 'astro-icon/components';
+import StretchType from './StretchType.astro';
 
 const path = Astro.url.pathname;
 const links = [
@@ -26,7 +27,19 @@ const fallback = segments.length > 1 ? '/articles' : '/';
 <header class="site-header">
   <div class="site-header__inner">
     <nav class="site-header__bar">
-      <p class="site-header__brand">TIMPETERSRESEARCH</p>
+      <p class="site-header__brand">
+        {/* Beide Werte gelten fuer DM Sans wght 600 — das Gewicht setzt
+            .site-header__brand in layout/_site-header.scss, und es gehoert
+            zusammen mit diesen beiden geaendert:
+            balance 0.5077 = natuerlicher Breitenanteil von TIMPETERS
+            (Vorschubbreiten 5.285em zu 5.124em), cap 67.25 = Versalhoehe, bei
+            der die Buchstaben unverzerrt stehen.
+
+            extent 0.1 statt 0.3 wie im Hero: der Kopfbereich steht auf jeder
+            Seite und in kleiner Groesse — bei voller Amplitude wuerden die
+            Strichstaerken sichtbar mitwandern. */}
+        <StretchType left="TIMPETERS" right="RESEARCH" balance={0.5077} cap={67.25} extent={0.2} />
+      </p>
       <a class="button button--pill" href={fallback} data-back>
         <Icon class="button__arrow button__arrow--back" name="lucide:corner-down-left" />
         Go Back

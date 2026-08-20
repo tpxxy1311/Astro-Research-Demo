@@ -24,9 +24,16 @@
     // das nur noch ein Strich.
     const MIN_THUMB = 24;
 
+    // Nachlauf, bis der Griff wieder schwarz wird. Kurz genug, um am Ende der
+    // Bewegung nicht nachzuhaengen, lang genug, um die Luecken zwischen den
+    // Rastungen eines Mausrads zu ueberbruecken — sonst flackerte die Farbe
+    // bei jedem einzelnen Tick.
+    const IDLE = 200;
+
     let travel = 0; // Weg, den der Griff im Track zurueckzulegen hat
     let max = 0; // Weg, den das Dokument scrollen kann
     let frame = 0;
+    let idle = 0;
 
     const draw = () => {
       frame = 0;
@@ -39,6 +46,16 @@
     // liegen bereits vor, sodass hier kein Layout erzwungen wird.
     const schedule = () => {
       if (!frame && max > 0) frame = requestAnimationFrame(draw);
+    };
+
+    // Faerbt den Griff fuer die Dauer der Bewegung im Akzent ein. Der Zustand
+    // liegt nur als Attribut vor, die Ueberblendung selbst gehoert ins CSS.
+    const onScroll = () => {
+      schedule();
+
+      bar.dataset.scrolling = '';
+      clearTimeout(idle);
+      idle = window.setTimeout(() => delete bar.dataset.scrolling, IDLE);
     };
 
     const measure = () => {
@@ -70,7 +87,7 @@
       bar.dataset.ready = '';
     };
 
-    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', measure);
 
     // Die Dokumenthoehe aendert sich auch ohne Fensterwechsel: nachgeladene

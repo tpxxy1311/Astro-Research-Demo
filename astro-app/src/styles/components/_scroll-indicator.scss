@@ -11,17 +11,17 @@
 .scroll-indicator {
   position: fixed;
   top: 50%;
-  right: $space-md;
+  right: $space-xs;
   z-index: $z-scroll;
 
   // Kurz und mittig statt den ganzen Rand entlang: die Anzeige steht neben
   // dem Text, sie rahmt ihn nicht ein.
   height: 20dvh;
-  width: 4px;
+  width: 8px;
 
   transform: translateY(-50%);
   border-radius: $radius-pill;
-  background-color: var(--color-line-strong);
+  background-color: var(--color-line);
 
   // Reine Anzeige — kein Ziel fuer den Zeiger und nichts, was eine Textauswahl
   // am rechten Rand abfangen koennte.
@@ -56,7 +56,17 @@
   // Bis zur ersten Messung hat der Griff keine Hoehe.
   height: 0;
   border-radius: inherit;
-  background-color: var(--color-fg);
+  background-color: var(--color-muted);
+
+  // Nur die Farbe, nicht transform: die Position muss der Bewegung ohne
+  // Verzoegerung folgen, sonst liefe der Griff dem Scrollen hinterher.
+  transition: background-color $dur $ease;
+
+  // Waehrend gescrollt wird, traegt die Leiste den Akzent. Der Zustand haengt
+  // am Rahmen, weil ihn das Skript dort setzt.
+  .scroll-indicator[data-scrolling] & {
+    background-color: var(--color-accent);
+  }
 }
 
 // Die native Leiste weicht nur dort, wo diese Anzeige sie ersetzt: auf

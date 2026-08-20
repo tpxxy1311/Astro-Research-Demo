@@ -94,11 +94,42 @@
 }
 
 .site-header__brand {
- font-weight: 600;
- font-size: $text-body;
-  text-decoration: none;
-  user-select: none;
+  // Weder font-size noch font-weight: die Wortmarke ist eine Sperrung aus zwei
+  // SVG-Haelften (StretchType.astro), die ihre Groesse aus der Breite dieses
+  // Rahmens holt. Versalhoehe = Breite x cap / 1000.
+  //
+  // Die Breite muss dabei fest in rem stehen und darf nicht mitfliessen: das
+  // padding-inline des angedockten Zustands machte den Rahmen sonst schmaler,
+  // die Wortmarke damit niedriger — und ueber die Hoehe des Kopfbereichs
+  // schaukelt sich genau die Rueckkopplung auf, die am Kopf dieser Datei
+  // beschrieben ist.
+  flex: none;
+
+  // Schmaler Bildschirm: "TIMPETERSRESEARCH" ist ein unbrechbares Wort und
+  // teilt sich die Zeile mit der Schaltflaeche. Hier hat der feste Wert einen
+  // zweiten Nutzen — er deckelt, was vorher der Text selbst bestimmte.
+  width: 9.5rem;
+
+  // Der Rahmen traegt die Farbe, die Haelften fuellen mit currentColor.
   color: var(--color-fg);
+
+  // Das SVG selbst ist aria-hidden; markierbar bliebe sonst nur das
+  // Screenreader-Label der Komponente, das beim Kopieren mitliefe.
+  user-select: none;
+
+  @include mq($bp-sm) {
+    // 1.1rem x 10.409em — der Vorschubbreite von TIMPETERSRESEARCH bei wght
+    // 600. Die Sperrung steht damit so gross da, als truege der Text
+    // font-size: 1.1rem, und im Ruhezustand unverzerrt.
+    width: 11.45rem;
+  }
+
+  // Die Komponente setzt 700 fuer den Hero. Hier bleibt es beim bisherigen
+  // Gewicht der Wortmarke — die dazu passenden Werte fuer cap und balance
+  // stehen im Markup in Header.astro.
+  .stretch-type__half {
+    font-weight: 600;
+  }
 }
 
 .site-header__nav {
