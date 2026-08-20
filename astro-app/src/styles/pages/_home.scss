@@ -48,5 +48,72 @@
   align-items: baseline;
   justify-content: flex-end;
   gap: $space-md;
-  padding-bottom: $space-lg;
+  padding-top: 3rem;
+  padding-bottom: 1.8rem;
+}
+
+// ------------------------------------------------------- Bildschirmhoehe
+// Die Startseite steht auf genau einer Bildschirmhoehe und scrollt nicht. Der
+// Abstand zum oberen und unteren Rand kommt deshalb als ein einziger Wert vom
+// Rahmen und nicht als zwei von Hero und Sektion — nur so sind beide Seiten
+// zwangslaeufig gleich, statt von Hand synchron gehalten zu werden.
+
+// Der Body zaehlt mit: sein min-height:100vh aus dem Reset liesse ihn um die
+// Hoehe der eingeklappten Mobile-Browserleiste ueber die Shell hinauswachsen,
+// und genau dieser Rest waere dann doch scrollbar.
+body.home {
+  min-height: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.home-shell {
+  // dvh, nicht vh: auf dem Handy rechnet vh mit eingeklappter Browserleiste
+  // und schoebe die Kartenreihe unter den Bildschirmrand.
+  height: 100dvh;
+  // Ohne das gaebe .site-main der Shell ein flex:1 mit Basis 0 mit, und der
+  // Body verteilte die Hoehe nach seinem eigenen Mass in vh — die Angabe
+  // darueber bliebe wirkungslos.
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  padding-block: $space-xl;
+  overflow: hidden;
+
+  // Hero und Sektion bringen ihre eigenen Paddings mit; innerhalb der Shell
+  // wuerden sie sich mit dem Rahmenabstand addieren.
+  .hero {
+    padding-block: 0;
+  }
+
+  // Der Vorspann ist lang. Auf dem Handy bleibt neben Wortmarke und Karte
+  // sonst keine Hoehe uebrig, und overflow:hidden schnitte ihn hart ab —
+  // besser ein gesetztes Ende als ein zufaelliges.
+  .hero__text {
+    @include line-clamp(5);
+
+    @include mq($bp-md) {
+      display: block;
+      -webkit-line-clamp: none;
+      line-clamp: none;
+    }
+  }
+
+  .section {
+    padding-bottom: 0;
+    // Die Kartenreihe soll den Rest fuellen. Dafuer muss die Sektion selbst
+    // wachsen und ihren Innenraum weiterreichen, sonst laeuft das flex:1 an
+    // der Reihe ins Leere. min-height:0 hebt die Vorgabe auf, dass ein
+    // Flex-Element nicht unter seinen Inhalt schrumpft — ohne sie wuechse die
+    // Sektion ueber den Bildschirm hinaus, statt ihn zu teilen.
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .entries--compact {
+    flex: 1;
+    min-height: 0;
+  }
 }

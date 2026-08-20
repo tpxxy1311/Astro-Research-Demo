@@ -1,0 +1,78 @@
+// Eigene Scrollbar: eine kurze Pille am rechten Rand, auf halber Hoehe. Sie
+// zeigt Position und Laenge des Dokuments, mehr nicht — gezogen wird an ihr
+// nicht, das Scrollen bleibt beim Browser (siehe ScrollIndicator.astro).
+//
+// Die Hoehen kommen vom Skript, nicht von hier: die des Griffs als Anteil des
+// Sichtfelds am Dokument, seine Position als transform. Das CSS legt nur den
+// Rahmen fest, in dem er sich bewegt.
+
+@use '../core' as *;
+
+.scroll-indicator {
+  position: fixed;
+  top: 50%;
+  right: $space-md;
+  z-index: $z-scroll;
+
+  // Kurz und mittig statt den ganzen Rand entlang: die Anzeige steht neben
+  // dem Text, sie rahmt ihn nicht ein.
+  height: 20dvh;
+  width: 4px;
+
+  transform: translateY(-50%);
+  border-radius: $radius-pill;
+  background-color: var(--color-line-strong);
+
+  // Reine Anzeige — kein Ziel fuer den Zeiger und nichts, was eine Textauswahl
+  // am rechten Rand abfangen koennte.
+  pointer-events: none;
+
+  // Der Startzustand. Das Skript setzt data-ready, sobald die Groesse des
+  // Griffs feststeht.
+  opacity: 0;
+  transition: opacity $dur $ease;
+
+  &[data-ready] {
+    opacity: 1;
+  }
+
+  // Explizit, damit eine spaetere display-Angabe an der Klasse das hidden des
+  // Skripts nicht aushebelt.
+  &[hidden] {
+    display: none;
+  }
+
+  // Ohne Zeiger gibt es nichts, was die 4 px treffen koennte, und der
+  // Overlay-Indikator des Systems erledigt die Aufgabe bereits.
+  @media (hover: none) {
+    display: none;
+  }
+}
+
+.scroll-indicator__thumb {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  // Bis zur ersten Messung hat der Griff keine Hoehe.
+  height: 0;
+  border-radius: inherit;
+  background-color: var(--color-fg);
+}
+
+// Die native Leiste weicht nur dort, wo diese Anzeige sie ersetzt: auf
+// Touch-Geraeten steht die Pille nicht, dann bleibt der Systemindikator die
+// einzige Rueckmeldung ueber die Position.
+//
+// Und bewusst nur am Wurzelelement statt an allen: die waagerechten Leisten
+// der Codeblöcke (components/_blocks.scss) und der Filterzeile
+// (components/_category-filter.scss) gehoeren nicht dazu — letztere versteckt
+// ihre ohnehin schon selbst.
+@media (hover: hover) {
+  html {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

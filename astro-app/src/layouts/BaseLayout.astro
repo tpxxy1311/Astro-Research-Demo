@@ -3,6 +3,7 @@ import '../styles/global.scss';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ScrollIndicator from '../components/ScrollIndicator.astro';
 import { SITE_LANG } from '../consts';
 
 interface Props {
@@ -32,5 +33,6 @@ const { title, description, image, type, publishedDate } = Astro.props;
       <slot />
     </main>
     <!-- <Footer /> -->
+    <ScrollIndicator />
   </body>
 </html>

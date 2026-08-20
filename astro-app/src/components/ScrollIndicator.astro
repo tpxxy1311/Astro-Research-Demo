@@ -1,0 +1,84 @@
+---
+// Ersatz fuer die native Scrollbar. Bewusst nur deren Optik, nicht deren
+// Bedienung: gescrollt wird weiter nativ — mit Rad, Trackpad, Tastatur und
+// Sprungmarken. Das Skript uebersetzt lediglich scrollY in eine Position,
+// deshalb aria-hidden hier und pointer-events:none im CSS.
+//
+// Gehoert ins BaseLayout, nicht ins HomeLayout: die Startseite steht auf einer
+// Bildschirmhoehe und scrollt nicht (siehe .home-shell in pages/_home.scss).
+---
+
+{/* hidden als Startzustand: solange nicht gemessen ist, ob die Seite ueberhaupt
+    ueber das Fenster hinausgeht, gibt es nichts anzuzeigen. */}
+<div class="scroll-indicator" data-scroll-indicator aria-hidden="true" hidden>
+  <span class="scroll-indicator__thumb" data-scroll-thumb></span>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-scroll-indicator]');
+  const thumb = document.querySelector<HTMLElement>('[data-scroll-thumb]');
+
+  if (bar && thumb) {
+    // Untergrenze fuer den Griff. Seine Hoehe steht fuer den Anteil des
+    // Dokuments, der gerade im Fenster steht — bei sehr langen Seiten waere
+    // das nur noch ein Strich.
+    const MIN_THUMB = 24;
+
+    let travel = 0; // Weg, den der Griff im Track zurueckzulegen hat
+    let max = 0; // Weg, den das Dokument scrollen kann
+    let frame = 0;
+
+    const draw = () => {
+      frame = 0;
+      const progress = Math.min(1, Math.max(0, window.scrollY / max));
+      thumb.style.transform = `translate3d(0, ${progress * travel}px, 0)`;
+    };
+
+    // Der Ereignisstrom beim Scrollen ist dichter als die Bildfolge. Ein Frame,
+    // ein Schreibzugriff — mehr braucht die Anzeige nicht, und die Messwerte
+    // liegen bereits vor, sodass hier kein Layout erzwungen wird.
+    const schedule = () => {
+      if (!frame && max > 0) frame = requestAnimationFrame(draw);
+    };
+
+    const measure = () => {
+      const doc = document.documentElement;
+      max = doc.scrollHeight - window.innerHeight;
+
+      // Seite passt ins Fenster — etwa die Ueber-mich-Seite auf grossen
+      // Bildschirmen. Dann steht die Leiste gar nicht erst da.
+      if (max <= 0) {
+        bar.hidden = true;
+        return;
+      }
+
+      // Vor dem Messen einblenden: ein verstecktes Element hat keine Hoehe.
+      bar.hidden = false;
+
+      const track = bar.clientHeight;
+      const height = Math.max(
+        MIN_THUMB,
+        Math.round(track * (window.innerHeight / doc.scrollHeight)),
+      );
+
+      travel = track - height;
+      thumb.style.height = `${height}px`;
+      draw();
+
+      // Erst jetzt sichtbar. Vorher stuende die Pille in falscher Groesse da
+      // und klappte beim ersten Messen um.
+      bar.dataset.ready = '';
+    };
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', measure);
+
+    // Die Dokumenthoehe aendert sich auch ohne Fensterwechsel: nachgeladene
+    // Bilder, Webfonts, der Grid/Listen-Umschalter der Artikelliste. Der
+    // Beobachter kann sich dabei nicht selbst ausloesen — die Leiste liegt
+    // fixiert und traegt nichts zur Hoehe des Body bei.
+    new ResizeObserver(measure).observe(document.body);
+
+    measure();
+  }
+</script>

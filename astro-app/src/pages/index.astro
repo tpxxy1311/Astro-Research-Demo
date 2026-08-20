@@ -1,7 +1,6 @@
 ---
 import HomeLayout from '../layouts/HomeLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
-import ArticleFeature from '../components/ArticleFeature.astro';
 import StretchType from '../components/StretchType.astro';
 import { Icon } from 'astro-icon/components';
 import EmptyState from '../components/EmptyState.astro';
@@ -10,11 +9,11 @@ import { getArticles, getAuthor } from '../lib/strapi';
 
 const [articles, author] = await Promise.all([getArticles(), getAuthor()]);
 
-const featured = articles.filter((article) => article.featured).slice(0, 2);
-// Auf der Startseite nichts doppelt zeigen.
-const featuredIds = new Set(featured.map((article) => article.id));
-// Drei fuellen die Kartenreihe auf grossen Schirmen genau aus.
-const latest = articles.filter((article) => !featuredIds.has(article.id)).slice(0, 3);
+// Drei, und keine Hervorhebung davor: die Startseite steht auf einer
+// Bildschirmhoehe (siehe .home-shell in pages/_home.scss), mehr passt nicht
+// darauf. Featured-Artikel sind deshalb nicht mehr ausgenommen — sie stehen
+// hier als gewoehnliche Eintraege, wenn sie zu den neuesten gehoeren.
+const latest = articles.slice(0, 3);
 ---
 <HomeLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <section class="container hero">
@@ -37,19 +36,6 @@ const latest = articles.filter((article) => !featuredIds.has(article.id)).slice(
     </p>
   </section>
 
-  {
-    featured.length > 0 && (
-      <section class="container section">
-        <div class="section__header">
-          <h2 class="eyebrow">Hervorgehoben</h2>
-        </div>
-        {featured.map((article) => (
-          <ArticleFeature article={article} />
-        ))}
-      </section>
-    )
-  }
-
   <section class="container section">
     <div class="section__header">
       <!-- <h2 class="eyebrow">Latest Publications</h2> -->
@@ -65,18 +51,19 @@ const latest = articles.filter((article) => !featuredIds.has(article.id)).slice(
 
     {
       latest.length > 0 ? (
-        <div class="entries entries--grid">
+        /* Beide Modifier: --grid traegt Rahmen, Schatten und Fusszeile der
+           Karte, --compact nimmt das Titelbild weg und laesst die Reihe die
+           restliche Bildschirmhoehe fuellen. */
+        <div class="entries entries--grid entries--compact">
           {latest.map((article) => (
             <ArticleCard article={article} />
           ))}
         </div>
       ) : (
-        featured.length === 0 && (
-          <EmptyState
-            title="Noch keine Artikel veroeffentlicht."
-            hint="Lege im Strapi-Admin unter Content Manager → Article einen Eintrag an und veroeffentliche ihn."
-          />
-        )
+        <EmptyState
+          title="Noch keine Artikel veroeffentlicht."
+          hint="Lege im Strapi-Admin unter Content Manager → Article einen Eintrag an und veroeffentliche ihn."
+        />
       )
     }
   </section>

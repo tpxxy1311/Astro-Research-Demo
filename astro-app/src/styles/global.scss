@@ -32,6 +32,7 @@
 @use 'components/tag-list';
 @use 'components/blocks';
 @use 'components/rich-text';
+@use 'components/scroll-indicator';
 
 // 4. Seiten — was wirklich nur an einer Stelle vorkommt
 @use 'pages/home';

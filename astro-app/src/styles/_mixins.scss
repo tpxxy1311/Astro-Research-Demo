@@ -9,15 +9,18 @@
   }
 }
 
-/// Zentrierter Inhaltsbereich mit Seitenrand.
-@mixin container($width: $width-wide) {
+/// Inhaltsbereich mit Seitenrand — bewusst ohne Deckelung: der Inhalt laeuft
+/// ueber die volle Viewportbreite, nur der Seitenrand haelt ihn von der Kante.
+///
+/// Das Mixin nahm frueher eine Maximalbreite als Parameter entgegen, gab sie
+/// aber nie aus. Der Parameter ist entfernt, weil er eine Deckelung versprach,
+/// die es nicht gibt — wer sie sucht, soll sie nicht scheinbar schon finden.
+/// Soll der Bereich doch einmal gedeckelt werden, gehoert das an die
+/// aufrufende Klasse, nicht zurueck hierher: die Wortmarke der Startseite
+/// holt ihre Groesse aus der Containerbreite und wuerde sonst mitschrumpfen.
+@mixin container {
   width: 100%;
-  margin-inline: auto;
   padding-inline: $gutter;
-
-  @include mq($bp-md) {
-    padding-inline: $gutter;
-  }
 }
 
 /// Kleine Versalien-Auszeichnung fuer Metazeilen und Rubriken.
@@ -32,10 +35,17 @@
 /// Text nach n Zeilen abschneiden.
 @mixin line-clamp($lines) {
   display: -webkit-box;
-  -webkit-line-clamp: $lines;
-  line-clamp: $lines;
+  @include line-clamp-lines($lines);
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/// Nur die Zeilenzahl einer bereits gesetzten Deckelung aendern — fuer
+/// Media- und Container-Queries, die die Stufe wechseln, aber den Rest der
+/// Deckelung (display, box-orient, overflow) nicht wiederholen sollen.
+@mixin line-clamp-lines($lines) {
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
 }
 
 /// Sichtbarer Fokusring nur bei Tastaturbedienung.

@@ -1,93 +1,52 @@
-// Artikelliste. Ein Markup, zwei Ansichten — welche gilt, entscheidet die
+// Artikelliste. Ein Markup, drei Ansichten — welche gilt, entscheidet die
 // Modifier-Klasse am Container, nicht die Komponente:
 //
-//   .entries--list   redaktionelle Zeilen, Nummer und Meta in eigenen Spalten
-//   .entries--grid   Karten nebeneinander, mit Titelbild
+//   .entries--list      redaktionelle Zeilen, Nummer und Meta in einer Kopfzeile
+//   .entries--grid      Karten nebeneinander, mit Titelbild
+//   .entries--compact   Karte ohne Titelbild, fuellt die verbleibende Hoehe
 //
-// Hier stand fruehe der Grundsatz "Zeilen statt Karten, die Typografie traegt
-// die Struktur". Er ist bewusst aufgegeben: die Liste ist jetzt eine von zwei
-// gleichwertigen Ansichten. Was von der Ueberlegung bleibt, ist ihr Kern —
-// weil die Titel lang sind, werden sie in der Kartenansicht geclampt und eine
-// Stufe kleiner gesetzt, sonst stehen unterschiedlich hohe Karten nebeneinander.
+// Hier stand frueher der Grundsatz "Zeilen statt Karten, die Typografie traegt
+// die Struktur". Er ist bewusst aufgegeben: die Liste ist jetzt eine von
+// mehreren gleichwertigen Ansichten. Was von der Ueberlegung bleibt, ist ihr
+// Kern — weil die Titel lang sind, werden sie in den Kartenansichten geclampt,
+// sonst stehen unterschiedlich hohe Karten nebeneinander.
+//
+// ---------------------------------------------------------------- Aufbau
+// Die Datei ist nach Ansicht gegliedert, nicht nach Element: erst die
+// gemeinsame Grundlage, dann je ein Block pro Ansicht. Wer wissen will, was
+// die Kartenansicht ausmacht, liest einen Abschnitt statt zehn verstreuter
+// Verschachtelungen.
+//
+//   1. Gemeinsame Grundlage — gilt in jeder Ansicht
+//   2. Ansicht: Zeile        (.entries--list)
+//   3. Ansicht: Karte        (.entries--grid)
+//   4. Ansicht: Kompakte Karte (.entries--compact)
+//
+// Die Reihenfolge der Abschnitte ist nicht beliebig. Alle Ansichtsregeln haben
+// dieselbe Spezifitaet (Modifier + Element), es entscheidet also die Position
+// in der Datei. Fuer Zeile und Karte ist das gleichgueltig, weil sie sich
+// gegenseitig ausschliessen — .entries--compact steht dagegen *zusammen* mit
+// .entries--grid am selben Container und muss deshalb dahinter bleiben.
 
 @use "../core" as *;
 
-.entries {
+// ==========================================================================
+// 1. Gemeinsame Grundlage
+// ==========================================================================
+// Alles, was in jeder Ansicht gilt. Ansichtsspezifisches gehoert nicht hierher,
+// sondern in einen der Bloecke darunter.
 
-  &--grid {
-    display: grid;
-    gap: $space-lg;
-
-    @include mq($bp-sm) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include mq($bp-xl) {
-      grid-template-columns: repeat(3, 1fr);
-      gap: $space-md;
-    }
-  }
-}
-
-// ---------------------------------------------------------------- Eintrag
 .entry {
+  // Traegt die Klickflaeche aus .entry__link::after.
   position: relative;
   display: flex;
   flex-direction: column;
   gap: $space-sm;
-
-  .entries--list & {
-    //padding-block: $space-lg;
-    border-bottom: 1px solid var(--color-line);
-    @include mq($bp-md) {
-      // Kopfzeile, darunter der Text ueber die volle Breite:
-      //
-      //   01                            01. MAI 2025  15 MIN.  MASTER THESIS
-      //   Titel und Vorspann                                              ->
-      gap: $space-md;
-      padding-bottom: 2rem;
-    }
-  }
-
-  // Karte: gestapelt, und als Flex-Spalte statt Grid, damit die Meta-Zeile
-  // per margin-top:auto an die Unterkante kann. Die Karten sind durch
-  // align-items:stretch des Containers ohnehin gleich hoch — ohne diesen
-  // Anker stehen ihre Meta-Zeilen je nach Titellaenge auf drei verschiedenen
-  // Hoehen, und die Reihe wirkt unaufgeraeumt.
-  .entries--grid & {
-    display: flex;
-    flex-direction: column;
-    gap: $space-xs;
-    box-shadow:
-      0 1px 2px rgb(0 0 0 / 0.05),
-      0 8px 28px rgb(0 0 0 / 0.07);
-    // Derselbe Strich, der in der Zeilenansicht die Eintraege trennt, umschliesst
-    // sie in der Kartenansicht — eine Linienfarbe fuer beide Ansichten.
-    border: 1px solid var(--color-line);
-    background-color: var(--color-bg);
-
-    // Minimal und rundum gleich: das Titelbild sitzt in der Flaeche statt an
-    // ihrer Kante, was erst dadurch zur abgerundeten Karte passt.
-    padding: $space-2xs;
-    border-radius: $radius-card;
-
-    // Kanten bleiben scharf, wie im Rest des Projekts — rund wird nur, was
-    // wie ein Chip oder eine Schaltflaeche funktioniert.
-    transition: border-color $dur $ease;
-  }
 }
 
-// Das Titelbild traegt nur die Karte — die Zeile bleibt bildlos.
 .entry__media {
   overflow: hidden;
   background-color: var(--color-surface);
-
-  .entries--grid & {
-    // Konzentrisch runden: der innere Radius ist der aeussere minus dem
-    // Abstand zwischen beiden. Nur so laufen Bild- und Kartenecke parallel,
-    // statt an den Ecken auseinanderzudriften.
-    border-radius: calc(#{$radius-card} - #{$space-2xs});
-  }
 
   img {
     width: 100%;
@@ -101,19 +60,6 @@
   .entry:hover & img {
     transform: scale(1.03);
   }
-
-  .entries--list & {
-    display: none;
-  }
-}
-
-// Nummer und Pfeil gehoeren zur Zeile: in der Karte fehlt beiden die
-// Fluchtlinie, an der sie sich ausrichten wuerden.
-.entry__index,
-.entry__arrow {
-  .entries--grid & {
-    display: none;
-  }
 }
 
 // Kopfzeile: Nummer links, Meta rechts. Der Wrapper existiert nur, damit die
@@ -124,13 +70,6 @@
   align-items: baseline;
   justify-content: flex-start;
   gap: $space-2xs $space-md;
-
-  // In der Karte ist die Nummer ausgeblendet, die Meta-Zeile rueckt damit von
-  // selbst nach links. margin-top:auto sitzt jetzt hier statt an der Meta-Zeile
-  // — es soll Kopf und Text gemeinsam an den Fuss der Karte schieben.
-  .entries--grid & {
-    margin-top: auto;
-  }
 }
 
 .entry__index {
@@ -168,12 +107,6 @@
 // Verhindert, dass lange Titel die Grid-Spalte sprengen.
 .entry__main {
   min-width: 0;
-
-  // Die Karte selbst ist knapp gepolstert — das passt fuer das Bild, waere fuer
-  // Text aber zu eng am Rahmen. Der Einzug kommt deshalb von den Textbloecken.
-  .entries--grid & {
-    padding-inline: $space-2xs;
-  }
 }
 
 .entry__title {
@@ -182,19 +115,26 @@
   letter-spacing: $track-title-3;
   font-weight: 600;
   text-wrap: balance;
-  // Nur transform animieren — bleibt auf dem Compositor.
-  transition: transform $dur $ease;
-
-  // In der Karte eine Stufe kleiner und auf drei Zeilen begrenzt.
-  .entries--grid & {
-    font-size: $text-title-3;
-    letter-spacing: $track-title-3;
-    @include line-clamp(3);
-  }
 }
 
 .entry__link {
-  text-decoration: none;
+  // Die Unterstreichung liegt dauerhaft an und ist nur durchsichtig — nur so
+  // laesst sie sich ueberblenden. Ein Wechsel von none zu underline waere ein
+  // harter Sprung, und die Zeile ruckte um die Dicke des Strichs.
+  //
+  // Bewusst keine Einfaerbung des Titels: --color-accent haelt auf Weiss rund
+  // 2:1 Kontrast. Ein schwarzer Titel, der beim Ueberfahren gruen wird, waere
+  // genau dann schlechter lesbar, wenn man ihn anvisiert. Die Farbe markiert
+  // die Interaktion deshalb neben dem Text, nicht in ihm.
+  //
+  // ACHTUNG: die Regel, die die Farbe beim Hover setzt, fehlt derzeit — ohne
+  // sie bleibt der Strich durchsichtig und der ganze Block wirkungslos.
+  // Sichtbar wird er mit: .entry:hover & { text-decoration-color: var(--color-accent); }
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.15em;
+  transition: text-decoration-color $dur $ease;
 
   // Spannt den ganzen Eintrag als Klickflaeche auf, ohne Links zu verschachteln.
   &::after {
@@ -210,12 +150,6 @@
   font-size: $text-small;
   line-height: 1.5;
   color: var(--color-muted);
-
-  // Die Spalte deckelt die Zeilenlaenge schon, dafuer ist mehr Hoehe da.
-  .entries--grid & {
-    @include line-clamp(3);
-    max-width: none;
-  }
 }
 
 .entry__meta {
@@ -225,32 +159,72 @@
   gap: $space-2xs $space-sm;
   @include label;
   color: var(--color-subtle);
+}
 
-  // In der Karte sitzt die Meta-Zeile am Fuss, damit die Reihe eine
-  // gemeinsame Grundlinie hat. Der seitliche und untere Einzug bringt sie auf
-  // denselben Abstand zum Rahmen wie das Bild.
-  .entries--grid & {
-    padding: $space-xs $space-2xs $space-2xs;
+// Der Pfeil gehoert allein zur Zeile — in der Karte fehlt ihm die Fluchtlinie,
+// an der er sich ausrichten wuerde. Er steht deshalb standardmaessig auf none
+// und wird nur im Listenblock eingeschaltet.
+.entry__arrow {
+  display: none;
+}
+
+// ==========================================================================
+// 2. Ansicht: Zeile
+// ==========================================================================
+// Redaktionelle Zeilen ueber die volle Breite, durch Striche getrennt.
+// Bildlos; Nummer und Pfeil gibt es nur hier.
+
+.entries--list {
+  .entry {
+    // padding-block, nicht padding-bottom: der Strich gehoert zum Eintrag und
+    // soll mittig im Zwischenraum stehen. Einseitig gepolstert klebt die
+    // Kopfzeile des naechsten Eintrags an ihm, waehrend darueber Luft bleibt.
+    // Und Padding statt Margin, weil der Strich sonst am Rand des
+    // Zwischenraums laege statt in seiner Mitte.
+    padding-block: 2rem;
+    border-bottom: 1px solid var(--color-line);
+
+    // Die Aussenkanten der Liste tragen den Abstand nicht selbst: oben steht
+    // schon die Kopfzone der Seite, und unter dem letzten Eintrag haette der
+    // Strich nichts mehr zu trennen — auf der Artikelseite folgte direkt
+    // darunter der zweite von .page__tags.
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    @include mq($bp-md) {
+      // Kopfzeile, darunter der Text ueber die volle Breite:
+      //
+      //   01                            01. MAI 2025  15 MIN.  MASTER THESIS
+      //   Titel und Vorspann                                              ->
+      gap: 1rem;
+    }
   }
 
-  // In der Zeilenansicht laeuft die Meta-Zeile waagerecht und schliesst
-  // rechts ab — nur so steht sie auf derselben Hoehe wie die Nummer. Als
-  // Spalte gesetzt waere sie drei Zeilen hoch und die Kopfzeile schief.
-  @include mq($bp-md) {
-    .entries--list & {
+  // Das Titelbild traegt nur die Karte — die Zeile bleibt bildlos.
+  .entry__media {
+    display: none;
+  }
+
+  // Die Meta-Zeile laeuft waagerecht und schliesst rechts ab — nur so steht
+  // sie auf derselben Hoehe wie die Nummer. Als Spalte gesetzt waere sie drei
+  // Zeilen hoch und die Kopfzeile schief.
+  .entry__meta {
+    @include mq($bp-md) {
       flex-direction: row;
       justify-content: flex-end;
       text-align: right;
       gap: $space-sm;
     }
   }
-}
-
-.entry__arrow {
-  display: none;
 
   @include mq($bp-md) {
-    .entries--list & {
+    .entry__arrow {
       display: block;
       // align-self, nicht justify-self: im Flex-Container liegt die Querachse
       // waagerecht, und justify-self wirkt dort ueberhaupt nicht.
@@ -266,9 +240,219 @@
         transform $dur $ease;
     }
 
-    .entries--list .entry:hover & {
+    // Nicht als "&" im Block darueber verschachtelbar: .entry:hover & haengt
+    // den Hover *vor* .entries--list und traefe damit einen anderen Baum.
+    .entry:hover .entry__arrow {
       opacity: 1;
       transform: translateX(0);
+    }
+  }
+}
+
+// ==========================================================================
+// 3. Ansicht: Karte
+// ==========================================================================
+// Karten nebeneinander, mit Titelbild. Grundlage auch fuer die kompakte
+// Ansicht darunter, die zusaetzlich zu diesem Modifier gesetzt wird.
+
+.entries--grid {
+  display: grid;
+  gap: 1rem;
+
+  @include mq($bp-sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include mq($bp-xl) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-md;
+  }
+
+  .entry {
+    // Der Eintrag ist schon in der Grundlage eine Flex-Spalte; hier kommt nur
+    // die Kartenflaeche dazu.
+    gap: 0rem;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 8px 28px rgb(0 0 0 / 0.07);
+    // Derselbe Strich, der in der Zeilenansicht die Eintraege trennt,
+    // umschliesst sie hier — eine Linienfarbe fuer beide Ansichten.
+    border: 1px solid var(--color-line);
+    background-color: var(--color-bg);
+
+    // Minimal und rundum gleich: das Titelbild sitzt in der Flaeche statt an
+    // ihrer Kante, was erst dadurch zur abgerundeten Karte passt.
+    padding: $space-2xs;
+    border-radius: $radius-card;
+
+  }
+
+  .entry__media {
+    // Konzentrisch runden: der innere Radius ist der aeussere minus dem
+    // Abstand zwischen beiden. Nur so laufen Bild- und Kartenecke parallel,
+    // statt an den Ecken auseinanderzudriften.
+    border-radius: calc(#{$radius-card} - #{$space-2xs});
+  }
+
+  // Nummer und Pfeil gehoeren zur Zeile: in der Karte fehlt beiden die
+  // Fluchtlinie, an der sie sich ausrichten wuerden.
+  .entry__index,
+  .entry__arrow {
+    display: none;
+  }
+
+  // Soll die Meta-Zeile wieder an den Fuss der Karte wandern, damit die Reihe
+  // eine gemeinsame Grundlinie bekommt, ist das der Schalter dafuer — er
+  // schiebt Kopfzeile und Text gemeinsam nach unten. Derzeit bewusst aus:
+  // die Zeile steht direkt unter dem Text.
+  .entry__head {
+    margin-top: 10px;
+  }
+
+  // Die Karte selbst ist knapp gepolstert — das passt fuer das Bild, waere
+  // fuer Text aber zu eng am Rahmen. Der Einzug kommt deshalb von den
+  // Textbloecken.
+  //
+  // Der untere Abstand sitzt hier und nicht am Vorspann, obwohl er dort
+  // hingehoerte: .entry__abstract ist per line-clamp beschnitten, und
+  // overflow:hidden schneidet am Padding-Rand ab, nicht am Inhaltsrand. Ein
+  // padding-bottom dort oeffnet unter der letzten Zeile ein Fenster, in dem
+  // die naechste — eigentlich verworfene — Zeile angeschnitten sichtbar wird.
+  .entry__main {
+    padding-inline: $space-2xs;
+    padding-bottom: $space-2xs;
+  }
+
+  // Groesse wie in der Grundlage, nur auf drei Zeilen begrenzt: nebeneinander
+  // stehende Karten sollen nicht an der Titellaenge auseinanderlaufen.
+  .entry__title {
+    @include line-clamp(3);
+  }
+
+  // Die Spalte deckelt die Zeilenlaenge, dafuer ist mehr Hoehe da. Kein
+  // Padding an diesem Element — siehe .entry__main oben.
+  .entry__abstract {
+    @include line-clamp(4);
+  }
+
+  // Der seitliche und untere Einzug bringt die Meta-Zeile auf denselben
+  // Abstand zum Rahmen wie das Bild.
+  .entry__meta {
+    padding: $space-xs $space-2xs $space-2xs;
+  }
+}
+
+// ==========================================================================
+// 4. Ansicht: Kompakte Karte
+// ==========================================================================
+// Bewusst keine eigene Komponente: eine kompakte Karte ist die Karte ohne
+// Titelbild, also ein Darstellungs- und kein Strukturunterschied. Am Container
+// stehen deshalb beide Modifier —
+//
+//   .entries--grid      Rahmen, Schatten, Radius, Polsterung
+//   .entries--compact   nimmt das Bild weg und fuellt die verbleibende Hoehe
+//
+// Dieser Block muss hinter Abschnitt 3 stehen: die Regeln hier haben dieselbe
+// Spezifitaet wie ihre Gegenstuecke dort und gewinnen nur durch ihre Position.
+//
+// Gebraucht wird die Ansicht auf der Startseite, die auf eine Bildschirmhoehe
+// festgelegt ist (siehe .home-shell in pages/_home.scss).
+
+.entries--compact {
+  // Eine Spalte, auch oberhalb $bp-sm: --grid stellte dort auf zwei um, was
+  // hier eine einzelne Karte auf halber Breite stehen liesse.
+  grid-template-columns: 1fr;
+
+  @include mq($bp-md) {
+    // Ohne Bild tragen die Karten weniger auf, die drei Spalten stehen
+    // deshalb schon hier nebeneinander statt erst ab $bp-xl.
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-sm;
+  }
+
+  .entry {
+    // Ohne Bild faellt der Grund fuer die knappe Polsterung weg — sie war auf
+    // die Bildkante gerechnet, fuer Text steht sie zu eng am Rahmen.
+    padding: 1.5rem $space-sm;
+
+    // Die Karte ist ihr eigener Abfragebereich: der Vorspann unten liest ihre
+    // Hoehe aus und waehlt danach die Zeilenzahl.
+    //
+    // ABHAENGIGKEIT: "size" heisst Groessen-Containment — der Inhalt darf die
+    // Hoehe der Karte nicht mehr bestimmen, sie muss von aussen kommen. Hier
+    // liefert sie die Rasterzeile, die ihrerseits an .entries--compact {
+    // flex: 1 } in der Bildschirmhoehen-Shell haengt (pages/_home.scss).
+    // Faellt diese Kette, fallen die Karten auf Hoehe 0 zusammen. Wer die
+    // kompakte Ansicht ausserhalb der Startseite einsetzt, muss ihr also
+    // zuerst eine Hoehe geben.
+    container: card / size;
+
+    // Sicherheitsnetz: mit Groessen-Containment waechst die Karte nicht mehr
+    // mit ihrem Inhalt. Passt er trotz Deckelung nicht, soll er am gerundeten
+    // Rand enden statt darueber hinauszulaufen.
+    overflow: hidden;
+  }
+
+  // Auf dem Handy bleibt nur der neueste Eintrag stehen. Astro rendert
+  // statisch und kennt den Viewport zur Bauzeit nicht, die Auswahl kann also
+  // nicht im Frontmatter fallen; die beiden anderen Karten liegen ungenutzt im
+  // Markup. Ihre Titelbilder kosten nichts — display:none plus loading="lazy"
+  // heisst, dass kein Browser die Datei anfordert.
+  .entry:nth-child(n + 2) {
+    display: none;
+
+    @include mq($bp-md) {
+      // flex, nicht block: das ist der Wert, den die Grundlage dem Eintrag
+      // gibt, und nur als Flex-Spalte stapeln sich seine Teile.
+      display: flex;
+    }
+  }
+
+  .entry__media {
+    display: none;
+  }
+
+  // Die Karte polstert jetzt selbst; der zusaetzliche Einzug, den die
+  // Kartenansicht den Textbloecken gibt, wuerde ihn verdoppeln.
+  .entry__main {
+    padding-inline: 0;
+  }
+
+  // Nur unten Luft: seitlich polstert die Karte, oben steht schon der Text.
+  .entry__meta {
+    padding: 0 0 $space-xs;
+  }
+
+  // ------------------------------------------ Zeilenzahl nach Kartenhoehe
+  // Die Stufen sind nicht geraten: eine Zeile Vorspann ist genau 1lh hoch,
+  // also $text-small (0.875rem) mal line-height 1.5 = 1.3125rem. Die Leiter
+  // ist in eben diesem Abstand gestuft — pro 1.3125rem mehr Innenhoehe eine
+  // Zeile mehr. Damit bleibt sie stimmig, egal wo sie einsetzt.
+  //
+  // Geschaetzt ist nur $card-base: die Innenhoehe, ab der vier Zeilen passen.
+  // Sie ergibt sich aus Meta-Zeile (~1.5rem), dreizeiligem Titel (~5.85rem),
+  // den Abstaenden (~1rem) und vier Zeilen Vorspann (5.25rem). Stimmt die
+  // Stufung nicht, ist das der einzige Wert, der nachzuziehen ist — in der
+  // Entwicklerkonsole die Innenhoehe einer Karte ablesen und einsetzen.
+  //
+  // Abgefragt wird die Content-Box der Karte, nicht ihre Aussenmasse: das
+  // Padding von 1.5rem oben und unten zaehlt hier also nicht mit.
+  $card-line: 1.3125rem;
+  $card-base: 13.6rem;
+  $card-lines: 4;
+  $card-lines-max: 8;
+
+  .entry__abstract {
+    // Untergrenze, und zugleich der Wert fuer Browser ohne Container-Queries:
+    // drei Zeilen stehen auf jeder Kartenhoehe.
+    @include line-clamp(3);
+
+    @for $lines from $card-lines through $card-lines-max {
+      // Interpolation ist Pflicht: in der Prelude einer At-Rule rechnet Sass
+      // sonst nicht, sondern schreibt den Ausdruck woertlich ins CSS.
+      @container card (min-height: #{$card-base + ($lines - $card-lines) * $card-line}) {
+        @include line-clamp-lines($lines);
+      }
     }
   }
 }
