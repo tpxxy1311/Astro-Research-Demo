@@ -1,6 +1,6 @@
 // Startseite.
 
-@use '../core' as *;
+@use "../core" as *;
 
 .hero {
   padding-block: $space-2xl $space-3xl;
@@ -18,8 +18,6 @@
   line-height: 0;
 }
 
-
-
 .hero__text {
   // .lead deckelt die Breite auf 34rem — align-self schiebt den Block nach rechts.
   align-self: flex-end;
@@ -31,8 +29,15 @@
 .hero__text__left {
   align-self: flex-start;
   text-align: left;
-  margin-top: $space-lg;
+  font-size: 1.2rem;
+  width: 80%;
+  -webkit-line-clamp: none;
+  line-clamp: none;
   font-family: $font-serif;
+      margin-top: $space-lg;
+  @include mq($bp-md) {
+    display: block;
+  }
 }
 
 .section {
@@ -74,10 +79,13 @@ body.home {
   // Ohne das gaebe .site-main der Shell ein flex:1 mit Basis 0 mit, und der
   // Body verteilte die Hoehe nach seinem eigenen Mass in vh — die Angabe
   // darueber bliebe wirkungslos.
+  padding-block: 3rem;
+  @include mq($bp-md) {
+    padding-block: clamp(2.5rem, 5.5dvh, $space-xl);
+  }
   flex: none;
   display: flex;
   flex-direction: column;
-  padding-block: $space-xl;
   overflow: hidden;
 
   // Hero und Sektion bringen ihre eigenen Paddings mit; innerhalb der Shell
@@ -90,8 +98,8 @@ body.home {
   // sonst keine Hoehe uebrig, und overflow:hidden schnitte ihn hart ab —
   // besser ein gesetztes Ende als ein zufaelliges.
   .hero__text {
-    @include line-clamp(5);
-
+    font-size: 1.2rem;
+    width: 80%;
     @include mq($bp-md) {
       display: block;
       -webkit-line-clamp: none;

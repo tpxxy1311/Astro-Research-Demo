@@ -3,18 +3,18 @@ import type { Category } from '../lib/strapi';
 
 interface Props {
   categories: Category[];
-  /** null = "Alle" ist aktiv */
+  /** null = "All" ist aktiv */
   active?: string | null;
 }
 
 const { categories, active = null } = Astro.props;
 
 const items = [
-  { slug: null, name: 'Alle' },
+  { slug: null, name: 'All' },
   ...categories.map((category) => ({ slug: category.slug, name: category.name })),
 ];
 ---
-<nav class="category-filter" aria-label="Nach Kategorie filtern">
+<nav class="category-filter" aria-label="Filter by category">
   <ul class="category-filter__list">
     {
       items.map((item) => (

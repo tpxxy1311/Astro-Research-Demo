@@ -41,7 +41,7 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
           )
         }
         <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
-        <span>{minutes} Min. Lesezeit</span>
+        <span>{minutes} min read</span>
       </div>
 
       <h1 class="article__title">{article.title}</h1>
@@ -63,7 +63,7 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
     <!-- {
       hasPaperInfo && (
         <aside class="paper">
-          {/* <h2 class="paper__label">Zugrundeliegende Arbeit</h2>
+          {/* <h2 class="paper__label">Underlying paper</h2>
           {article.originalPaperTitle && (
             <p class="paper__title">{article.originalPaperTitle}</p>
           )}
@@ -74,7 +74,7 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
                 <path d="M10 2a1 1 0 0 1 1 1v7.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L9 10.586V3a1 1 0 0 1 1-1Z" />
                 <path d="M3 14a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1Z" />
               </svg>
-              Originalarbeit als PDF
+              Original paper as PDF
               {fileSizeLabel && <span class="paper__size">({fileSizeLabel})</span>}
             </a>
           )}
@@ -89,7 +89,7 @@ const hasPaperInfo = Boolean(article.originalPaperTitle || article.originalPaper
     <!-- {
       article.tags?.length > 0 && (
         <footer class="article__footer">
-          <h2 class="eyebrow">Schlagworte</h2>
+          <h2 class="eyebrow">Tags</h2>
           <TagList tags={article.tags} size="md" />
         </footer>
       )

@@ -30,6 +30,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-optical-sizing: auto;
+  //overflow-x: hidden; // Safari 15.4+ workaround fuer horizontales Scrollen bei position:sticky
 }
 
 img,

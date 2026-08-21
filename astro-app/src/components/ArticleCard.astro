@@ -48,7 +48,7 @@ const indexLabel = index === undefined ? null : String(index).padStart(2, '0');
         </a>
       )}
       <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
-      <span>{minutes} Min.</span>
+      <span>{minutes} min</span>
       {article.originalPaperType && <span>{article.originalPaperType}</span>}
     </div>
   </div>

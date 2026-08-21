@@ -102,6 +102,30 @@
       color: var(--color-inverse-fg);
     }
   }
+
+  // Eine Stufe kleiner, solange der Platz knapp ist. Gedacht fuer den
+  // Kopfbereich, wo die Schaltflaeche sich die Zeile mit der Wortmarke teilt —
+  // deshalb ein Groessen-Modifier und keine Regel unter .site-header: die
+  // Enge ist der Grund, nicht der Ort.
+  //
+  // Muss hinter der gemeinsamen Form von --pill/--switch stehen. Beide sind
+  // einklassig und damit gleich spezifisch; nur die Position entscheidet.
+  &--compact {
+    // Die Beschriftung ist zwei Woerter lang und soll eine Zeile bleiben. Der
+    // Umbruch faellt hier und nicht nur mobil weg: eine Schaltflaeche, die in
+    // zwei Zeilen zerfaellt, ist in keiner Breite gewollt. Der Pfeil ist ein
+    // eigenes Flex-Element und war davon ohnehin nie betroffen.
+    white-space: nowrap;
+
+    font-size: $text-small;
+
+    // Ab hier ist Platz fuer die Grundgroesse — dieselbe Schwelle, an der auch
+    // Wortmarke und Navigationsabstand im Kopfbereich umschalten
+    // (layout/_site-header.scss).
+    @include mq($bp-sm) {
+      font-size: $text-body;
+    }
+  }
 }
 
 // Mehrere Schaltflaechen als eine Einheit.

@@ -5,6 +5,8 @@
  * soll der Build laut scheitern statt eine halbleere Seite zu erzeugen.
  */
 
+import { SITE_LANG } from '../consts';
+
 const STRAPI_URL = (import.meta.env.STRAPI_URL ?? 'http://localhost:1337').replace(/\/$/, '');
 const STRAPI_TOKEN = import.meta.env.STRAPI_TOKEN;
 
@@ -241,8 +243,12 @@ export async function getAuthor(): Promise<Author | null> {
 /* ------------------------------------------------------------- Hilfsmittel */
 
 export function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('de-DE', {
-    day: '2-digit',
+  // Sprache aus consts.ts statt als Literal: derselbe Wert steht am lang des
+  // <html>, damit koennen Auszeichnung und Datumsformat nicht auseinanderlaufen.
+  return new Date(value).toLocaleDateString(SITE_LANG, {
+    // Nicht '2-digit': im Deutschen gehoert die fuehrende Null dazu
+    // ("05. Maerz"), im Englischen liest sich "March 05" falsch.
+    day: 'numeric',
     month: 'long',
     year: 'numeric',
   });

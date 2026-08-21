@@ -3,7 +3,7 @@
 // Hierarchie entsteht aus Groesse, Gewicht und Zeilenabstand als Satz —
 // nicht aus Groesse allein.
 
-@use '../core' as *;
+@use "../core" as *;
 
 h1,
 h2,
@@ -20,7 +20,6 @@ strong {
   font-weight: 600;
 }
 
-
 /// Groesste Stufe — nur einmal pro Seite.
 .display {
   font-size: $text-display;
@@ -32,8 +31,12 @@ strong {
 
 /// Seitentitel.
 .title {
-  font-size: $text-title-1;
-  line-height: $leading-title-1;
+  font-size: $text-title-2;
+  line-height: $leading-title-2;
+  @include mq($bp-md) {
+    font-size: $text-title-1;
+    line-height: $leading-title-1;
+  }
   font-weight: 700;
   text-transform: uppercase;
   text-wrap: balance;

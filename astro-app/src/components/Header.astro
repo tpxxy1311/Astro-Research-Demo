@@ -5,9 +5,9 @@ import StretchType from './StretchType.astro';
 
 const path = Astro.url.pathname;
 const links = [
-  { href: '/', label: 'Start' },
-  { href: '/articles', label: 'Artikel' },
-  { href: '/about', label: 'Ueber mich' },
+  { href: '/', label: 'Home' },
+  { href: '/articles', label: 'Articles' },
+  { href: '/about', label: 'About' },
 ];
 
 const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
@@ -40,7 +40,7 @@ const fallback = segments.length > 1 ? '/articles' : '/';
             Strichstaerken sichtbar mitwandern. */}
         <StretchType left="TIMPETERS" right="RESEARCH" balance={0.5077} cap={67.25} extent={0.2} />
       </p>
-      <a class="button button--pill" href={fallback} data-back>
+      <a class="button button--pill button--compact" href={fallback} data-back>
         <Icon class="button__arrow button__arrow--back" name="lucide:corner-down-left" />
         Go Back
       </a>

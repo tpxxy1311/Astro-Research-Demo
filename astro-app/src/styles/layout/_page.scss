@@ -1,10 +1,10 @@
 // Gemeinsames Geruest der Uebersichts- und Inhaltsseiten
 // (Artikelliste, Kategorie, Schlagwort, Ueber mich).
 
-@use '../core' as *;
+@use "../core" as *;
 
 .page {
-  padding-block: $space-2xl $space-3xl;
+  padding-block: 3rem;
 
   @include mq($bp-md) {
     padding-block: $space-xl;
@@ -14,7 +14,10 @@
   &__head {
     display: grid;
     gap: $space-sm;
-    padding-bottom: $space-xl;
+    padding-bottom: 0;
+    @include mq($bp-md) {
+      padding-bottom: $space-xl;
+    }
   }
 
   &__count {
@@ -34,7 +37,11 @@
     flex-wrap: wrap;
     align-items: center;
     gap: $space-md;
-    padding-bottom: $space-xl;
+    padding-top: 3rem;
+    padding-bottom: 1.8rem;
+    @include mq($bp-md) {
+      padding-bottom: $space-xl;
+    }
 
     .button-group {
       margin-left: auto;

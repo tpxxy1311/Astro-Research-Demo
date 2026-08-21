@@ -1,10 +1,10 @@
 // Einzelartikel: schmale Lesespalte, grosszuegige Kopfzone,
 // Originalarbeit als eigener Block.
 
-@use '../core' as *;
+@use "../core" as *;
 
 .article {
-  padding-block: $space-2xl $space-3xl;
+  padding-block: 3rem;
 
   @include mq($bp-md) {
     padding-block: $space-xl;
@@ -36,20 +36,26 @@
 
 .article__abstract {
   margin-top: $space-md;
-  font-size: 1.7rem;
-  line-height: $leading-lead;
-  letter-spacing: $track-lead;
   color: var(--color-muted);
   text-wrap: pretty;
   font-family: $font-serif;
+  font-size: 1.3rem;
+  @include mq($bp-md) {
+    font-size: 1.7rem;
+    line-height: $leading-lead;
+  }
 }
 
 .article__cover {
   width: 100%;
-  margin-top: 3rem;
+  margin-top: 2rem;
   border-radius: $radius-card;
-  aspect-ratio: 21 / 9;     /* ← hier */
+  aspect-ratio: 3 / 2; /* ← hier */
   object-fit: cover;
+  @include mq($bp-md) {
+    margin-top: 3rem;
+    aspect-ratio: 21 / 9; /* ← hier */
+  }
 }
 
 // -------------------------------------------------------- Originalarbeit
@@ -146,7 +152,7 @@
 
     // Der Pfeil laeuft in Richtung des Ziels voraus.
     &::before {
-      content: '\2190';
+      content: "\2190";
       transition: transform $dur $ease;
     }
 

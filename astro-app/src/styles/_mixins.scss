@@ -20,7 +20,10 @@
 /// holt ihre Groesse aus der Containerbreite und wuerde sonst mitschrumpfen.
 @mixin container {
   width: 100%;
-  padding-inline: $gutter;
+  padding-inline: 2rem;
+  @include mq($bp-md) {
+    padding-block: $gutter;
+  }
 }
 
 /// Kleine Versalien-Auszeichnung fuer Metazeilen und Rubriken.

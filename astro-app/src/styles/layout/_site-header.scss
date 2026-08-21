@@ -57,7 +57,8 @@
   transition: padding-inline $dur $ease;
 
   .site-header--pinned & {
-    padding-inline: $space-sm;
+    padding-inline-start: $space-sm;
+    padding-inline-end: $space-xs;
   }
 }
 

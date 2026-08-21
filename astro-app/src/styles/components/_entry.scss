@@ -109,12 +109,21 @@
   min-width: 0;
 }
 
+// Eine Stufe kleiner auf dem Handy: dort steht der Titel in einer schmalen
+// Spalte und laeuft in der vollen Groesse ueber zu viele Zeilen. Tracking geht
+// mit — es ist groessenabhaengig gesetzt (siehe _variables.scss), ein
+// stehengebliebenes $track-title-3 zoege die kleinere Schrift zu eng zusammen.
 .entry__title {
-  font-size: $text-title-3;
+  font-size: $text-lead;
   line-height: 1.3;
-  letter-spacing: $track-title-3;
+  letter-spacing: $track-lead;
   font-weight: 600;
   text-wrap: balance;
+
+  @include mq($bp-md) {
+    font-size: $text-title-3;
+    letter-spacing: $track-title-3;
+  }
 }
 
 .entry__link {
@@ -211,6 +220,19 @@
     display: none;
   }
 
+  .entry__head {
+    flex-direction: column;
+     gap:$space-sm;
+    @include mq($bp-md) {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: flex-start;
+      gap: $space-2xs $space-md;
+    }
+  }
+
   // Die Meta-Zeile laeuft waagerecht und schliesst rechts ab — nur so steht
   // sie auf derselben Hoehe wie die Nummer. Als Spalte gesetzt waere sie drei
   // Zeilen hoch und die Kopfzeile schief.
@@ -284,7 +306,6 @@
     // ihrer Kante, was erst dadurch zur abgerundeten Karte passt.
     padding: $space-2xs;
     border-radius: $radius-card;
-
   }
 
   .entry__media {
@@ -435,23 +456,60 @@
   // Stufung nicht, ist das der einzige Wert, der nachzuziehen ist — in der
   // Entwicklerkonsole die Innenhoehe einer Karte ablesen und einsetzen.
   //
+  // $card-lines-base ist der Anker der Rechnung und nicht der Anfang der
+  // Leiter — die beiden Rollen lagen frueher auf einer Variablen, und wer die
+  // Leiter verlaengern wollte, verschob damit versehentlich alle Schwellen.
+  // Der Anker gehoert zu $card-base und bleibt bei 4; angefasst werden
+  // $card-lines-min und $card-lines-max. Fuer Stufen unter dem Anker wird der
+  // Faktor negativ und zieht von $card-base ab.
+  //
+  // GRENZE NACH OBEN, zweimal: die Leiter endet auf dem Handy hoeher als auf
+  // dem Desktop. Dort steht nur die erste Karte (siehe :nth-child(n + 2) oben)
+  // und fuellt die ganze restliche Bildschirmhoehe, wird also deutlich hoeher
+  // als eine von dreien in der Reihe ab $bp-md. Ohne die hoehere Grenze bliebe
+  // unter dem gedeckelten Vorspann eine leere Flaeche stehen.
+  //
+  // $card-lines-max gilt als Grundlage, $card-lines-max-md deckelt ab $bp-md
+  // wieder ein. Der Deckel ist eine einzelne Abfrage hinter der Leiter: gleiche
+  // Spezifitaet, spaetere Position — sie gewinnt gegen jede hoehere Stufe, die
+  // ueber ihrer Schwelle liegt, und laesst alles darunter unberuehrt.
+  //
+  // GRENZE NACH UNTEN: der Titel schrumpft nicht mit, er steht in Abschnitt 3
+  // fest auf drei Zeilen. Mit Meta-Zeile und Abstaenden sind rund 8.35rem
+  // belegt, bevor die erste Zeile Vorspann ueberhaupt Platz hat. Darunter
+  // schneidet das overflow:hidden der Karte den Vorspann weg — line-clamp
+  // begrenzt Zeilen, es erzwingt keine Sichtbarkeit. Die unteren Stufen
+  // greifen also erst ab etwa dieser Hoehe sichtbar.
+  //
   // Abgefragt wird die Content-Box der Karte, nicht ihre Aussenmasse: das
   // Padding von 1.5rem oben und unten zaehlt hier also nicht mit.
   $card-line: 1.3125rem;
   $card-base: 13.6rem;
-  $card-lines: 4;
-  $card-lines-max: 8;
+  $card-lines-base: 4;
+  $card-lines-min: 1;
+  $card-lines-max: 11;
+  $card-lines-max-md: 8;
 
   .entry__abstract {
-    // Untergrenze, und zugleich der Wert fuer Browser ohne Container-Queries:
-    // drei Zeilen stehen auf jeder Kartenhoehe.
-    @include line-clamp(3);
+    // Der Boden der Leiter, und zugleich der Wert fuer Browser ohne
+    // Container-Queries.
+    @include line-clamp($card-lines-min);
 
-    @for $lines from $card-lines through $card-lines-max {
+    // Ab der zweiten Stufe: die erste ist der Boden und braucht keine Abfrage.
+    @for $lines from $card-lines-min + 1 through $card-lines-max {
       // Interpolation ist Pflicht: in der Prelude einer At-Rule rechnet Sass
       // sonst nicht, sondern schreibt den Ausdruck woertlich ins CSS.
-      @container card (min-height: #{$card-base + ($lines - $card-lines) * $card-line}) {
+      @container card (min-height: #{$card-base + ($lines - $card-lines-base) * $card-line}) {
         @include line-clamp-lines($lines);
+      }
+    }
+
+    // Abgefragt wird die Schwelle der ERSTEN Stufe, die hier wegfallen soll —
+    // also $card-lines-max-md + 1. Alles ab dieser Hoehe faellt auf den Deckel
+    // zurueck; Karten darunter behalten die Stufe aus der Leiter.
+    @include mq($bp-md) {
+      @container card (min-height: #{$card-base + ($card-lines-max-md + 1 - $card-lines-base) * $card-line}) {
+        @include line-clamp-lines($card-lines-max-md);
       }
     }
   }

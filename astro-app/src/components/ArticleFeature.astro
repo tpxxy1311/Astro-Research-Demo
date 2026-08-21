@@ -35,7 +35,7 @@ const minutes = article.readingTime ?? estimateReadingTime(article.content);
         </a>
       )}
       <time datetime={article.publishedDate}>{formatDate(article.publishedDate)}</time>
-      <span>{minutes} Min.</span>
+      <span>{minutes} min</span>
     </div>
 
     <h2 class="feature__title">
@@ -45,6 +45,6 @@ const minutes = article.readingTime ?? estimateReadingTime(article.content);
     </h2>
 
     <p class="feature__abstract">{article.abstract}</p>
-    <span class="feature__more">Weiterlesen</span>
+    <span class="feature__more">Read more</span>
   </div>
 </article>

@@ -31,11 +31,11 @@ const { category, categories, articles } = Astro.props;
 ---
 <BaseLayout
   title={category.name}
-  description={category.description ?? `Alle Artikel in der Kategorie ${category.name}.`}
+  description={category.description ?? `All articles in the ${category.name} category.`}
 >
   <div class="container page">
     <header class="page__head">
-      <p class="eyebrow">Kategorie</p>
+      <p class="eyebrow">Category</p>
       <h1 class="title">{category.name}</h1>
       {category.description && <p class="lead">{category.description}</p>}
     </header>
@@ -52,7 +52,7 @@ const { category, categories, articles } = Astro.props;
           ))}
         </div>
       ) : (
-        <EmptyState title={`In "${category.name}" ist noch kein Artikel veroeffentlicht.`} />
+        <EmptyState title={`No articles published in "${category.name}" yet.`} />
       )
     }
   </div>

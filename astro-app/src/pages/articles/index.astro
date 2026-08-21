@@ -23,7 +23,7 @@ const [articles, categories, tags] = await Promise.all([
       Over the course of my studies, I've written across a range of topics, from technical deep-dives in development to research on UX and design. This page brings that work together: bachelor's thesis, seminar papers, and group projects, all reworked into a format that's easier to explore than the original PDFs.
     </p>
       <!-- <p class="page__count">
-        {articles.length} {articles.length === 1 ? 'Beitrag' : 'Beitraege'}
+        {articles.length} {articles.length === 1 ? 'Article' : 'Articles'}
       </p> -->
     </header>
 
@@ -32,7 +32,7 @@ const [articles, categories, tags] = await Promise.all([
 
       {
         articles.length > 0 && (
-          <div class="button-group-left" role="group" aria-label="Ansicht" data-view-switch>
+          <div class="button-group-left" role="group" aria-label="View" data-view-switch>
             <button class="button button--switch" type="button" data-view="grid" aria-pressed="true">
               Grid
             </button>
@@ -53,8 +53,8 @@ const [articles, categories, tags] = await Promise.all([
         </div>
       ) : (
         <EmptyState
-          title="Noch keine Artikel veroeffentlicht."
-          hint="Lege im Strapi-Admin unter Content Manager → Article einen Eintrag an und veroeffentliche ihn."
+          title="No articles published yet."
+          hint="Create an entry under Content Manager → Article in the Strapi admin and publish it."
         />
       )
     }
@@ -62,7 +62,7 @@ const [articles, categories, tags] = await Promise.all([
     {
       tags.length > 0 && (
         <section class="page__tags">
-          <h2 class="eyebrow">Nach Schlagwort</h2>
+          <h2 class="eyebrow">By Tag</h2>
           <TagList tags={tags} size="md" />
         </section>
       )

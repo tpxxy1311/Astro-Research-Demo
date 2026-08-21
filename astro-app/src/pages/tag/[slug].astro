@@ -29,10 +29,10 @@ interface Props {
 
 const { tag, tags, articles } = Astro.props;
 ---
-<BaseLayout title={`#${tag.name}`} description={`Alle Artikel zum Schlagwort ${tag.name}.`}>
+<BaseLayout title={`#${tag.name}`} description={`All articles tagged ${tag.name}.`}>
   <div class="container page">
     <header class="page__head">
-      <p class="eyebrow">Schlagwort</p>
+      <p class="eyebrow">Tag</p>
       <h1 class="title">{tag.name}</h1>
     </header>
 
@@ -48,7 +48,7 @@ const { tag, tags, articles } = Astro.props;
           ))}
         </div>
       ) : (
-        <EmptyState title={`Zu "${tag.name}" ist noch kein Artikel veroeffentlicht.`} />
+        <EmptyState title={`No articles tagged "${tag.name}" yet.`} />
       )
     }
   </div>

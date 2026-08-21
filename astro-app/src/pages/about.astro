@@ -8,8 +8,8 @@ const author = await getAuthor();
 const avatar = mediaUrlFormat(author?.avatar, 'small');
 ---
 <BaseLayout
-  title="Ueber mich"
-  description={author ? `Ueber ${author.name} und diesen Blog.` : 'Ueber diesen Blog.'}
+  title="About"
+  description={author ? `About ${author.name} and this site.` : 'About this site.'}
   image={avatar}
 >
   <div class="container container--prose page">
@@ -17,7 +17,7 @@ const avatar = mediaUrlFormat(author?.avatar, 'small');
       author ? (
         <>
           <header class="page__head">
-            <p class="eyebrow">Ueber mich</p>
+            <p class="eyebrow">About</p>
             <div class="profile">
               {avatar && (
                 <img
@@ -50,12 +50,12 @@ const avatar = mediaUrlFormat(author?.avatar, 'small');
       ) : (
         <>
           <header class="page__head">
-            <p class="eyebrow">Ueber mich</p>
-            <h1 class="title">Autorenprofil</h1>
+            <p class="eyebrow">About</p>
+            <h1 class="title">Author Profile</h1>
           </header>
           <EmptyState
-            title="Es ist noch kein Autorenprofil hinterlegt."
-            hint="Im Strapi-Admin unter Content Manager → Author ausfuellen und veroeffentlichen."
+            title="No author profile has been set up yet."
+            hint="Fill it in under Content Manager → Author in the Strapi admin and publish it."
           />
         </>
       )
